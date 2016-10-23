@@ -13,9 +13,7 @@ tokens = (
     'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
     'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW',
     'ID',
-    'NUMBER',
-    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EQUALS',
-    'LPAREN', 'RPAREN',
+    'NUMBER', 'REL_OP', 'MATH_OP',
 )
 
 # Tokens
@@ -38,13 +36,8 @@ t_REAL_T = r'real'
 t_CHAR_T = r'char'
 
 # Operators
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_TIMES = r'\*'
-t_DIVIDE = r'/'
-t_EQUALS = r'='
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
+t_REL_OP = r'.eq | .gt | .ge | .lt | .le'
+t_MATH_OP = r'\+ | \- | \* | \/'
 
 # etc
 t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
