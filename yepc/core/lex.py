@@ -15,7 +15,7 @@ tokens = (
     'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
     'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW',
     'ID',
-    'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP',
+    'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP',
     'WHITE_SPACE', 'COMMENTS',
 )
 
@@ -41,6 +41,7 @@ t_CHAR_T = r'char'
 # Operators
 t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le'
 t_MATH_OP = r'\+ | \- | \* | \/(?:[^\/])'
+t_EXP_OP = r'= | \+= | \-= | \*= | \/= | \+\+ | \-\-'
 
 # etc
 t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
@@ -59,17 +60,20 @@ def t_NUMBER(t):
 
 
 def t_CHARCONST(t):
-    r'\?\c'
+    r"'\\?\w'"
     try:
-        if t.value == '\n':
-            print("new line")
-        elif t.value == '\0':
-            print("null")
+        if len(t.value) == 4:
+            if t.value == "'\\n'":
+                print('new line')
+            elif t.value == "'\\0'":
+                print('null')
+            else:
+                t.value = str(t.value[2])
         else:
-            t.value = str(t.value)
+            t.value = str(t.value[1])
     except ValueError:
-        print("Character Value error %c", t.value)
-        return t
+        print("Character Value error %s", t.value)
+    return t
 
 # Ignored characters
 t_ignore = " \t"
@@ -92,6 +96,7 @@ data = '''
 int #zz99
 //It's a fucking comment :)
 #zz99 = 1 + 2
+#ps77 = '\\n' + 'c' + '\\c'
 '''
 
 # Give the lexer some input
