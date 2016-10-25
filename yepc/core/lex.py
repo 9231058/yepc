@@ -39,13 +39,14 @@ t_REAL_T = r'real'
 t_CHAR_T = r'char'
 
 # Operators
-t_REL_OP = r'.eq | .gt | .ge | .lt | .le'
-t_MATH_OP = r'\+ | \- | \* | \/'
+t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le'
+t_MATH_OP = r'\+ | \- | \* | \/(?:[^\/])'
 
 # etc
 t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
 t_WHITE_SPACE = r'[ \t\n]+'
-t_COMMENTS = r'\/\/\u*$'
+t_COMMENTS = r'\/\/.*'
+
 
 def t_NUMBER(t):
     r'\d+'
@@ -54,20 +55,21 @@ def t_NUMBER(t):
     except ValueError:
         print("Integer value too large %d", t.value)
         t.value = 0
-    return t
+        return t
+
 
 def t_CHARCONST(t):
-     r'\?\c'
-     try:
+    r'\?\c'
+    try:
         if t.value == '\n':
             print("new line")
         elif t.value == '\0':
             print("null")
         else:
             t.value = str(t.value)
-     except ValueError:
-         print("Character Value error %c", t.value)
-     return t
+    except ValueError:
+        print("Character Value error %c", t.value)
+        return t
 
 # Ignored characters
 t_ignore = " \t"
@@ -88,8 +90,8 @@ lexer = lex.lex()
 # Test it out
 data = '''
 int #zz99
-3 + 4 * 10
-  + -20 *2
+//It's a fucking comment :)
+#zz99 = 1 + 2
 '''
 
 # Give the lexer some input
@@ -100,4 +102,4 @@ while True:
     tok = lexer.token()
     if not tok:
         break      # No more input
-print(tok)
+    print(tok)
