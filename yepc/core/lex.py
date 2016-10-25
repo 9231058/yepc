@@ -5,6 +5,8 @@
 # [] Creation Date : 23-10-2016
 #
 # [] Created By : Parham Alvani (parham.alvani@gmail.com)
+#
+# [] Created By : Saman Fekri (samanf74@gmail.com)
 # =======================================
 import ply.lex as lex
 
@@ -13,7 +15,8 @@ tokens = (
     'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
     'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW',
     'ID',
-    'NUMBER', 'REL_OP', 'MATH_OP',
+    'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP',
+    'WHITE_SPACE', 'COMMENTS',
 )
 
 # Tokens
@@ -41,7 +44,8 @@ t_MATH_OP = r'\+ | \- | \* | \/'
 
 # etc
 t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
-
+t_WHITE_SPACE = r'[ \t\n]+'
+t_COMMENTS = r'\/\/\u*$'
 
 def t_NUMBER(t):
     r'\d+'
@@ -51,6 +55,19 @@ def t_NUMBER(t):
         print("Integer value too large %d", t.value)
         t.value = 0
     return t
+
+def t_CHARCONST(t):
+     r'\?\c'
+     try:
+        if t.value == '\n':
+            print("new line")
+        elif t.value == '\0':
+            print("null")
+        else:
+            t.value = str(t.value)
+     except ValueError:
+         print("Character Value error %c", t.value)
+     return t
 
 # Ignored characters
 t_ignore = " \t"
@@ -67,3 +84,20 @@ def t_error(t):
 
 # Build the lexer
 lexer = lex.lex()
+
+# Test it out
+data = '''
+int #zz99
+3 + 4 * 10
+  + -20 *2
+'''
+
+# Give the lexer some input
+lexer.input(data)
+
+# Tokenize
+while True:
+    tok = lexer.token()
+    if not tok:
+        break      # No more input
+print(tok)
