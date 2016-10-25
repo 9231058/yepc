@@ -32,6 +32,12 @@ t_DEFAULT_KW = r'default'
 t_RETURN_KW = r'return'
 t_BREAK_KW = r'break'
 
+
+# Comments
+def t_COMMENTS(t):
+    r'\/\/.*'
+    pass
+
 # Types
 t_INT_T = r'int'
 t_BOOL_T = r'bool'
@@ -40,13 +46,12 @@ t_CHAR_T = r'char'
 
 # Operators
 t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le'
-t_MATH_OP = r'\+ | \- | \* | \/(?:[^\/])'
+t_MATH_OP = r'\+ | \- | \* | \/'
 t_EXP_OP = r'= | \+= | \-= | \*= | \/= | \+\+ | \-\-'
 
 # etc
 t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
 t_WHITE_SPACE = r'[ \t\n]+'
-t_COMMENTS = r'\/\/.*'
 
 
 def t_NUMBER(t):
