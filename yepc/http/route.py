@@ -15,10 +15,26 @@ from ..core.lex import YEPCLexer
 lexer = YEPCLexer().build()
 
 
+# About
+
 @app.route('/about')
 def about_handler():
         return "18.20 is leaving us"
 
+
+# UI
+
+@app.route('/<path:path>', methods=['GET'])
+def ui_handler(path):
+    return flask.send_from_directory('../yepc-UI', path)
+
+
+@app.route('/', methods=['GET'])
+def root_handler():
+    return flask.send_file('../yepc-UI/index.html')
+
+
+# Lex Phase
 
 @app.route('/lex', methods=['POST'])
 def lex_handler():
