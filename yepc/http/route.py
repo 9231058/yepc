@@ -38,14 +38,11 @@ def root_handler():
 
 @app.route('/lex', methods=['POST'])
 def lex_handler():
-    print(flask.request.data)
     data = flask.request.form['text']
+    print(data)
     result = []
 
     lexer.input(data)
-
-    if lexer.token() is None:
-        return json.dumps(result)
 
     for tok in lexer:
         result.append({
