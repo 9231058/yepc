@@ -61,7 +61,7 @@ class YEPCLexer:
         except ValueError:
             print("Integer value too large %d", t.value)
             t.value = 0
-            return t
+        return t
 
     def t_CHARCONST(self, t):
         r"'\\?\w'"
@@ -76,7 +76,7 @@ class YEPCLexer:
             else:
                 t.value = str(t.value[1])
         except ValueError:
-            print("Character Value error %s", t.value)
+            print("Character value error %s", t.value)
         return t
 
     # Ignored characters
