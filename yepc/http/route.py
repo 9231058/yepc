@@ -26,12 +26,12 @@ def about_handler():
 
 @app.route('/<path:path>', methods=['GET'])
 def ui_handler(path):
-    return flask.send_from_directory('../yepc-UI', path)
+    return flask.send_from_directory('yepc-UI', path)
 
 
 @app.route('/', methods=['GET'])
 def root_handler():
-    return flask.send_file('../yepc-UI/index.html')
+    return flask.send_file('yepc-UI/index.html')
 
 
 # Lex Phase
