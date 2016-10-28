@@ -15,7 +15,7 @@ class YEPCLexer:
     tokens = (
         'INT_T', 'BOOL_T', 'REAL_T', 'CHAR_T',
         'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
-        'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW',
+        'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
         'ID',
         'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP',
         'WHITE_SPACE', 'COMMENTS',
@@ -23,6 +23,7 @@ class YEPCLexer:
 
     # Tokens
     # Keywords
+    t_RECORD_KW = r'record'
     t_IF_KW = r'if'
     t_THEN_KW = r'then'
     t_ELSE_KW = r'else'
