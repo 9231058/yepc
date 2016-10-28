@@ -12,7 +12,7 @@ import json
 from . import app
 from ..core.lex import YEPCLexer
 
-lexer = YEPCLexer().build()
+lexer = YEPCLexer()
 
 
 # About
@@ -42,9 +42,11 @@ def lex_handler():
     print(data)
     result = []
 
-    lexer.input(data)
+    l = lexer.build()
 
-    for tok in lexer:
+    l.input(data)
+
+    for tok in l:
         result.append({
             'type': tok.type,
             'value': tok.value,
