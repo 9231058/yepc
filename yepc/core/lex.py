@@ -16,9 +16,12 @@ class YEPCLexer:
         'INT_T', 'BOOL_T', 'REAL_T', 'CHAR_T',
         'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
         'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
-        'ID',
-        'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP',
+        'ID', 'FAKE_ID',
+        'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP', 'REAL',
         'WHITE_SPACE', 'COMMENTS',
+        'TRUE', 'FALSE',
+        'SEMICOLON', 'COLON',
+        'BR_OPEN', 'BR_CLOSE', 'PR_OPEN', 'PR_CLOSE', 'BK_OPEN', 'BK_CLOSE',
     )
 
     # Tokens
@@ -34,6 +37,22 @@ class YEPCLexer:
     t_DEFAULT_KW = r'default'
     t_RETURN_KW = r'return'
     t_BREAK_KW = r'break'
+
+    # boolean
+    t_TRUE = r'True'
+    t_FALSE = r'False'
+
+    # smicolon
+    t_SEMICOLON = r';'
+    t_COLON = r','
+
+    # pranthesis and barcket
+    t_BR_OPEN = r'\{'
+    t_BR_CLOSE = r'\}'
+    t_PR_OPEN = r'\('
+    t_PR_CLOSE = r'\)'
+    t_BK_OPEN = r'\['
+    t_BK_CLOSE = r'\]'
 
     # Comments
     def t_COMMENTS(self, t):
@@ -53,7 +72,17 @@ class YEPCLexer:
 
     # etc
     t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
+    t_FAKE_ID = r'\#[a-zA-Z]{2}[0-9]{2}^[;\s]+'
     t_WHITE_SPACE = r'[ \t\n]+'
+
+    def t_REAL(self, t):
+        r'\d*\.\d+'
+        try:
+            t.value = float(t.value)
+        except ValueError:
+            print("Float value too large %d", t.value)
+            t.value = 0
+        return t
 
     def t_NUMBER(self, t):
         r'\d+'
@@ -65,7 +94,7 @@ class YEPCLexer:
         return t
 
     def t_CHARCONST(self, t):
-        r"'\\?\w'"
+        r"'\\?[\w'\\]'"
         try:
             if len(t.value) == 4:
                 if t.value == "'\\n'":
