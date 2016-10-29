@@ -73,7 +73,8 @@ class YEPCLexer:
     # etc
     t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
     t_FAKE_ID = r'\#[a-zA-Z]{2}[0-9]{2}^[;\s]+'
-    t_WHITE_SPACE = r'[ \t\n]+'
+
+    t_CHARCONST = r"'\\?[\w'\\]'"
 
     def t_REAL(self, t):
         r'\d*\.\d+'
@@ -93,24 +94,8 @@ class YEPCLexer:
             t.value = 0
         return t
 
-    def t_CHARCONST(self, t):
-        r"'\\?[\w'\\]'"
-        try:
-            if len(t.value) == 4:
-                if t.value == "'\\n'":
-                    print('new line')
-                elif t.value == "'\\0'":
-                    print('null')
-                else:
-                    t.value = str(t.value[2])
-            else:
-                t.value = str(t.value[1])
-        except ValueError:
-            print("Character value error %s", t.value)
-        return t
-
     # Ignored characters
-    t_ignore = " \t"
+    t_ignore = r'\w'
 
     def t_newline(self, t):
         r'\n+'
