@@ -18,9 +18,9 @@ class YEPCLexer:
         'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
         'ID', 'FAKE_ID',
         'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP', 'REAL',
-        'WHITE_SPACE', 'COMMENTS',
+        'COMMENTS',
         'TRUE', 'FALSE',
-        'SEMICOLON', 'COLON',
+        'SEMICOLON', 'COLON', 'DOT',
         'BR_OPEN', 'BR_CLOSE', 'PR_OPEN', 'PR_CLOSE', 'BK_OPEN', 'BK_CLOSE',
     )
 
@@ -38,15 +38,16 @@ class YEPCLexer:
     t_RETURN_KW = r'return'
     t_BREAK_KW = r'break'
 
-    # boolean
+    # Boolean
     t_TRUE = r'True'
     t_FALSE = r'False'
 
-    # smicolon
+    # Punctuation
     t_SEMICOLON = r';'
     t_COLON = r','
+    t_DOT = r'\.'
 
-    # pranthesis and barcket
+    # Pranthesis and Barcket
     t_BR_OPEN = r'\{'
     t_BR_CLOSE = r'\}'
     t_PR_OPEN = r'\('
