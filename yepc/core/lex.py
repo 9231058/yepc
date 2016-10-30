@@ -75,7 +75,7 @@ class YEPCLexer:
     # Operators
     t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le | \.ne'
     t_MATH_OP = r'\+ | \- | \* | \/ | % | \?'
-    t_EXP_OP = r'= | \+= | \-= | \*= | \/= | \+\+ | \-\-'
+    t_EXP_OP = r'='
 
     # etc
     t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
