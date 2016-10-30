@@ -39,7 +39,6 @@ def root_handler():
 @app.route('/lex', methods=['POST'])
 def lex_handler():
     data = flask.request.form['text']
-    print(data)
     result = []
 
     l = lexer.build()
