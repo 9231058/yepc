@@ -16,11 +16,12 @@ class YEPCLexer:
         'INT_T', 'BOOL_T', 'REAL_T', 'CHAR_T',
         'IF_KW', 'THEN_KW', 'ELSE_KW', 'SWITCH_KW', 'CASE_KW', 'END_KW',
         'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
+        'STATIC_KW', 'NOT_KW', 'AND_KW', 'OR_KW',
         'ID', 'FAKE_ID',
-        'NUMBER', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP', 'REAL',
+        'NUMCONST', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP', 'REALCONST',
         'COMMENTS',
         'TRUE', 'FALSE',
-        'SEMICOLON', 'COLON', 'DOT',
+        'SEMICOLON', 'COLON', 'DOT', 'COMMA',
         'BR_OPEN', 'BR_CLOSE', 'PR_OPEN', 'PR_CLOSE', 'BK_OPEN', 'BK_CLOSE',
     )
 
@@ -37,15 +38,20 @@ class YEPCLexer:
     t_DEFAULT_KW = r'default'
     t_RETURN_KW = r'return'
     t_BREAK_KW = r'break'
+    t_STATIC_KW = r'static'
+    t_NOT_KW = r'not'
+    t_AND_KW = r'and'
+    t_OR_KW = r'or'
 
     # Boolean
-    t_TRUE = r'True'
-    t_FALSE = r'False'
+    t_TRUE = r'true'
+    t_FALSE = r'false'
 
     # Punctuation
     t_SEMICOLON = r';'
-    t_COLON = r','
+    t_COLON = r':'
     t_DOT = r'\.'
+    t_COMMA = r','
 
     # Pranthesis and Barcket
     t_BR_OPEN = r'\{'
@@ -67,17 +73,17 @@ class YEPCLexer:
     t_CHAR_T = r'char'
 
     # Operators
-    t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le'
-    t_MATH_OP = r'\+ | \- | \* | \/'
+    t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le | \.ne'
+    t_MATH_OP = r'\+ | \- | \* | \/ | % | \?'
     t_EXP_OP = r'= | \+= | \-= | \*= | \/= | \+\+ | \-\-'
 
     # etc
     t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
-    t_FAKE_ID = r'\#[a-zA-Z]{2}[0-9]{2}^[;\s]+'
+    t_FAKE_ID = r'\#[a-zA-Z]{2}[0-9]{2}[\w]+'
 
     t_CHARCONST = r"'\\?[\w'\\]'"
 
-    def t_REAL(self, t):
+    def t_REALCONST(self, t):
         r'\d*\.\d+'
         try:
             t.value = float(t.value)
@@ -86,7 +92,7 @@ class YEPCLexer:
             t.value = 0
         return t
 
-    def t_NUMBER(self, t):
+    def t_NUMCONST(self, t):
         r'\d+'
         try:
             t.value = int(t.value)
@@ -96,7 +102,7 @@ class YEPCLexer:
         return t
 
     # Ignored characters
-    t_ignore = r'\w'
+    t_ignore = ' \t\r\f\v'
 
     def t_newline(self, t):
         r'\n+'
