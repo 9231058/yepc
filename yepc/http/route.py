@@ -11,8 +11,10 @@ import json
 
 from . import app
 from ..core.lex import YEPCLexer
+from ..core.yacc import YEPCParser
 
 lexer = YEPCLexer()
+parser = YEPCParser()
 
 
 # About
@@ -52,5 +54,20 @@ def lex_handler():
             'lineno': tok.lineno,
             'lexpos': tok.lexpos
         })
+
+    return json.dumps(result)
+
+# YACC Phase
+
+
+@app.route('/yacc', methods=['POST'])
+def yacc_handler():
+    data = flask.request.form['text']
+    result = []
+
+    l = lexer.build()
+    p = parser.build()
+
+    p.parse(data, lexer=l)
 
     return json.dumps(result)
