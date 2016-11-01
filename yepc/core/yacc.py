@@ -13,9 +13,40 @@ from .lex import YEPCLexer
 class YEPCParser:
     tokens = YEPCLexer.tokens
 
+    def p_program(self, p):
+        'program : declarationList'
+        pass
+
+    def p_declaration_list(self, p):
+        '''
+        declarationList : declarationListDeclaration
+                        | declaration
+        '''
+        pass
+
+    def p_declaration(self, p):
+        '''
+        declaration : varDeclaration
+                    | funDeclaration
+                    | recDeclaration
+        '''
+        pass
+
+    def p_rec_declaration(self, p):
+        '''
+        recDeclaration : RECORD_KW ID BR_OPEN localDeclaration BR_CLOSE
+        '''
+        pass
+
+    def p_var_declaration(self, p):
+        '''
+        varDeclaration : typeSpecifier varDeclarationList SEMICOLON
+        '''
+
     def p_param_id(self, p):
-        '''paramId : ID
-                   | ID BR_OPEN BR_CLOSE
+        '''
+        paramId : ID
+                | ID BR_OPEN BR_CLOSE
         '''
         if len(p) == 2:
             print(p[1])
