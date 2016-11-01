@@ -42,6 +42,52 @@ class YEPCParser:
         '''
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
         '''
+        pass
+
+    def p_var_declaration_list(self, p):
+        '''
+        varDeclarationList : varDeclaraionList COMMA varDeclarationInitialize
+                           | varDeclarationInitialize
+        '''
+        pass
+
+    def p_var_declaration_initialize(self, p):
+        '''
+        varDeclarationInitialize : varDeclarationId
+                                 | varDeclarationId COLON simpleExpression
+        '''
+        pass
+
+    def p_var_declaration_id(self, p):
+        '''
+        varDeclarationId : ID
+                         | ID BK_OPEN NUMCONST BK_CLOSE
+
+        '''
+        pass
+
+    def p_type_specifier(self, p):
+        '''
+        typeSpecifier : returnTypeSpecifier
+                      | ID
+        '''
+        pass
+
+    def p_return_type_specifier(self, p):
+        '''
+        returnTypeSpecifier : INT_T
+                            | REAL_T
+                            | BOOL_T
+                            | CHAR_T
+        '''
+        pass
+
+    def p_fun_declaration(self, p):
+        '''
+        funDeclaration : typeSpecifier ID PR_OPEN params PR_CLOSE statement
+                       | ID PR_OPEN params PR_CLOSE statement
+        '''
+        pass
 
     def p_param_id(self, p):
         '''
