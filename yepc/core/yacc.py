@@ -89,6 +89,33 @@ class YEPCParser:
         '''
         pass
 
+    def p_params(self, p):
+        '''
+        params : paramList
+               | empty
+        '''
+        pass
+
+    def p_param_list(self, p):
+        '''
+        paramList : paramList SEMICOLON paramTypeList
+                  | paramTypeList
+        '''
+        pass
+
+    def p_param_type_list(self, p):
+        '''
+        paramTypeList : typeSpecifier paramIdList
+        '''
+        pass
+
+    def p_param_id_list(self, p):
+        '''
+        paramIdList : paramIdList COMMA paramId
+                    | paramId
+        '''
+        pass
+
     def p_param_id(self, p):
         '''
         paramId : ID
@@ -102,6 +129,13 @@ class YEPCParser:
     # Error rule for syntax errors
     def p_error(self, p):
         print("Syntax error in input!")
+
+    # Empty rule
+    def p_empty(self, p):
+        '''
+        empty :
+        '''
+        pass
 
     def build(self, **kwargs):
         '''
