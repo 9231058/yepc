@@ -126,6 +126,17 @@ class YEPCParser:
         else:
             print("%s[]" % p[1])
 
+    def p_statement(self, p):
+        '''
+        statement : expressionStmt
+                  | compoundStmt
+                  | selectionStmt
+                  | iterationStmt
+                  | returnStmt
+                  | breakStmt
+        '''
+        pass
+
     # Error rule for syntax errors
     def p_error(self, p):
         print("Syntax error in input!")
