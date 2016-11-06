@@ -6,7 +6,7 @@
 #
 # [] Created By : Parham Alvani (parham.alvani@gmail.com)
 #
-# [] Created By : Saman Fekri (samanf74@gmail.com) (SKings)
+# [] Created By : Saman Fekri (samanf74@gmail.com)
 # =======================================
 import ply.yacc as yacc
 from .lex import YEPCLexer
