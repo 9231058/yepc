@@ -139,6 +139,97 @@ class YEPCParser:
         '''
         pass
 
+    def p_compound_stmt(self,p):
+        '''
+        compoundStmt : BR_OPEN localDecrations statementList BR_CLOSE
+        '''
+        pass
+
+    def p_local_declarations(self, p):
+        '''
+        localDeclarations : localDeclarations scopedVarDeclarations
+                            | empty
+        '''
+        pass
+
+    def p_statement_list(self, p):
+        '''
+        statementList : statementList statement
+                        | empty
+        '''
+        pass
+
+    def p_expression_stmt(self, p):
+        '''
+        expressionStmt : expression SEMICOLON
+                        | SEMICOLON
+        '''
+        pass
+
+    def p_selection_stmt(self, p):
+        '''
+        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement
+                        | IF_KW PR_OPEN simpleExpression PR_CLOSE statement ELSE_KW statement
+                        | SWITCH_KW PR_OPEN simpleExpression PR_CLOSE caseElement defaultElement END_KW
+        '''
+        pass
+
+    def p_case_element(self, p):
+        '''
+        caseElement : CASE_KW NUMCONST COLON statement SEMICOLON
+                    | caseElement CASE_KW NUMCONST COLON statement SEMICOLON
+        '''
+        pass
+
+    def p_default_element(self, p):
+        '''
+        defaultElement : DEFAULT_KW COLON statement SEMICOLON
+                        | empty
+        '''
+        pass
+
+    def p_iteration_stmt(self, p):
+        '''
+        iterationStmt : WHILE_KW PR_OPEN simpleExpression PR_CLOSE statement
+        '''
+        pass
+
+    def p_return_stmt(self, p):
+        '''
+        returnStmt : RETURN_KW SEMICOLON
+                    | RETURN_KW expression SEMICOLON
+        '''
+        pass
+
+    def p_break_stmt(self, p):
+        '''
+        breakStmt : BREAK_KW SEMICOLON
+        '''
+        pass
+
+    def p_mutable(self, p):
+        '''
+        mutable : ID
+                | mutable BK_OPEN expression BK_CLOSE
+                | mutable DOT ID
+        '''
+        pass
+
+    def p_immutable(self, p):
+        '''
+        immutable : PR_OPEN expression PR_CLOSE
+                    | call
+                    | constant
+        '''
+        pass
+
+    def p_call(self, p):
+        '''
+        call : ID PR_OPEN args PR_CLOSE
+        '''
+        pass
+
+
     # Error rule for syntax errors
     def p_error(self, p):
         print("Syntax error in input!")
