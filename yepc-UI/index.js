@@ -27,6 +27,21 @@ var lexer = new Vue({
   }
 })
 
+var parser = new Vue({
+  el: '#parser',
+  data: {
+    tokens: []
+  },
+  methods: {
+    parse: function () {
+      var form = $("#source").serialize()
+      $.post('yacc', form, function (data, status) {
+        lexer.tokens = JSON.parse(data)
+      })
+    }
+  }
+})
+
 new Vue({
   el: '#source',
   methods: {
