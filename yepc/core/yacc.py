@@ -21,10 +21,11 @@ class YEPCParser:
 
     def p_declaration_list(self, p):
         '''
-        declarationList : declarationListDeclaration
+        declarationList : declarationList declaration
                         | declaration
         '''
         pass
+
 
     def p_declaration(self, p):
         '''
@@ -36,7 +37,7 @@ class YEPCParser:
 
     def p_rec_declaration(self, p):
         '''
-        recDeclaration : RECORD_KW ID BR_OPEN localDeclaration BR_CLOSE
+        recDeclaration : RECORD_KW ID BR_OPEN localDeclarations BR_CLOSE
         '''
         pass
 
@@ -54,7 +55,7 @@ class YEPCParser:
 
     def p_var_declaration_list(self, p):
         '''
-        varDeclarationList : varDeclaraionList COMMA varDeclarationInitialize
+        varDeclarationList : varDeclarationList COMMA varDeclarationInitialize
                            | varDeclarationInitialize
         '''
         pass
@@ -76,7 +77,8 @@ class YEPCParser:
 
     def p_scoped_type_specifier(self, p):
         '''
-        scopedTypeSpecifer : STATIC_KW typeSpecifier | typeSpecifier
+        scopedTypeSpecifier : STATIC_KW typeSpecifier
+                            | typeSpecifier
         '''
         pass
 
@@ -231,7 +233,7 @@ class YEPCParser:
 
     def p_local_declarations(self, p):
         '''
-        localDeclarations : localDeclarations scopedVarDeclarations
+        localDeclarations : localDeclarations scopedVarDeclaration
                           | empty
         '''
         pass
