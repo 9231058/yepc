@@ -46,6 +46,12 @@ class YEPCParser:
         '''
         pass
 
+    def p_scoped_var_declaration(self, p):
+        '''
+        scopedVarDeclaration : scopedTypeSpecifier varDeclarationList SEMICOLON
+        '''
+        pass
+
     def p_var_declaration_list(self, p):
         '''
         varDeclarationList : varDeclaraionList COMMA varDeclarationInitialize
@@ -65,6 +71,12 @@ class YEPCParser:
         varDeclarationId : ID
                          | ID BK_OPEN NUMCONST BK_CLOSE
 
+        '''
+        pass
+
+    def p_scoped_type_specifier(self, p):
+        '''
+        scopedTypeSpecifer : STATIC_KW typeSpecifier | typeSpecifier
         '''
         pass
 
@@ -213,28 +225,28 @@ class YEPCParser:
 
     def p_compound_stmt(self, p):
         '''
-        compoundStmt : BR_OPEN localDecrations statementList BR_CLOSE
+        compoundStmt : BR_OPEN localDeclarations statementList BR_CLOSE
         '''
         pass
 
     def p_local_declarations(self, p):
         '''
         localDeclarations : localDeclarations scopedVarDeclarations
-                            | empty
+                          | empty
         '''
         pass
 
     def p_statement_list(self, p):
         '''
         statementList : statementList statement
-                        | empty
+                      | empty
         '''
         pass
 
     def p_expression_stmt(self, p):
         '''
         expressionStmt : expression SEMICOLON
-                        | SEMICOLON
+                       | SEMICOLON
         '''
         pass
 
