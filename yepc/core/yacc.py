@@ -26,7 +26,6 @@ class YEPCParser:
         '''
         pass
 
-
     def p_declaration(self, p):
         '''
         declaration : varDeclaration
@@ -153,78 +152,6 @@ class YEPCParser:
         '''
         pass
 
-    def p_expression(self, p):
-        '''
-        expression : mutable EXP_OP expression
-                   | mutable MATH_OP EXP_OP expression
-                   | simpleExpression
-                   | mutable MATH_OP MATH_OP
-        '''
-        pass
-
-    def p_simple_expression(self, p):
-        '''
-        simpleExpression : simpleExpression OR_KW simpleExpression
-                         | simpleExpression AND_KW simpleExpression
-                         | simpleExpression OR_KW ELSE_KW simpleExpression
-                         | simpleExpression AND_KW THEN_KW simpleExpression
-                         | NOT_KW simpleExpression
-                         | relExpression
-        '''
-        pass
-
-    def p_rel_expression(self, p):
-        '''
-        relExpression : mathlogicExpression REL_OP mathlogicExpression
-                      | mathlogicExpression
-        '''
-        pass
-
-    def p_mathlogic_expression(self, p):
-        '''
-        mathlogicExpression : mathlogicExpression MATH_OP mathlogicExpression
-                            | unaryExpression
-        '''
-        pass
-
-    def p_unary_expression(self, p):
-        '''
-        unaryExpression : MATH_OP unaryExpression
-                        | factor
-        '''
-        pass
-
-    def p_factor(self, p):
-        '''
-        factor : immutable
-               | mutable
-        '''
-        pass
-
-    def p_constant(self, p):
-        '''
-        constant : NUMCONST
-                 | REALCONST
-                 | CHARCONST
-                 | TRUE
-                 | FALSE
-        '''
-        pass
-
-    def p_arg_list(self, p):
-        '''
-        argList : argList COMMA expression
-                | expression
-        '''
-        pass
-
-    def p_args(self, p):
-        '''
-        args : argList
-             | empty
-        '''
-        pass
-
     def p_compound_stmt(self, p):
         '''
         compoundStmt : BR_OPEN localDeclarations statementList BR_CLOSE
@@ -293,6 +220,54 @@ class YEPCParser:
         '''
         pass
 
+    def p_expression(self, p):
+        '''
+        expression : mutable EXP_OP expression
+                   | mutable MATH_OP EXP_OP expression
+                   | simpleExpression
+                   | mutable MATH_OP MATH_OP
+        '''
+        pass
+
+    def p_simple_expression(self, p):
+        '''
+        simpleExpression : simpleExpression OR_KW simpleExpression
+                         | simpleExpression AND_KW simpleExpression
+                         | simpleExpression OR_KW ELSE_KW simpleExpression
+                         | simpleExpression AND_KW THEN_KW simpleExpression
+                         | NOT_KW simpleExpression
+                         | relExpression
+        '''
+        pass
+
+    def p_rel_expression(self, p):
+        '''
+        relExpression : mathlogicExpression REL_OP mathlogicExpression
+                      | mathlogicExpression
+        '''
+        pass
+
+    def p_mathlogic_expression(self, p):
+        '''
+        mathlogicExpression : mathlogicExpression MATH_OP mathlogicExpression
+                            | unaryExpression
+        '''
+        pass
+
+    def p_unary_expression(self, p):
+        '''
+        unaryExpression : MATH_OP unaryExpression
+                        | factor
+        '''
+        pass
+
+    def p_factor(self, p):
+        '''
+        factor : immutable
+               | mutable
+        '''
+        pass
+
     def p_mutable(self, p):
         '''
         mutable : ID
@@ -312,6 +287,30 @@ class YEPCParser:
     def p_call(self, p):
         '''
         call : ID PR_OPEN args PR_CLOSE
+        '''
+        pass
+
+    def p_args(self, p):
+        '''
+        args : argList
+             | empty
+        '''
+        pass
+
+    def p_arg_list(self, p):
+        '''
+        argList : argList COMMA expression
+                | expression
+        '''
+        pass
+
+    def p_constant(self, p):
+        '''
+        constant : NUMCONST
+                 | REALCONST
+                 | CHARCONST
+                 | TRUE
+                 | FALSE
         '''
         pass
 
