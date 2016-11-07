@@ -134,7 +134,7 @@ class YEPCParser:
     def p_param_id(self, p):
         '''
         paramId : ID
-                | ID BR_OPEN BR_CLOSE
+                | ID BK_OPEN BK_CLOSE
         '''
         if len(p) == 2:
             print(p[1])
@@ -316,7 +316,7 @@ class YEPCParser:
 
     # Error rule for syntax errors
     def p_error(self, p):
-        print("Syntax error in input!")
+        print("Syntax error in input: %s" % p)
 
     # Empty rule
     def p_empty(self, p):
