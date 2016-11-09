@@ -15,6 +15,12 @@ from .lex import YEPCLexer
 class YEPCParser:
     tokens = YEPCLexer.tokens
 
+    precedence = (
+        ('left', 'EXP_OP'),
+        ('left', 'OR_KW', 'AND_KW'),
+        ('left', 'MATH_OP')
+    )
+
     def p_program(self, p):
         'program : declarationList'
         pass
@@ -136,10 +142,7 @@ class YEPCParser:
         paramId : ID
                 | ID BK_OPEN BK_CLOSE
         '''
-        if len(p) == 2:
-            print(p[1])
-        else:
-            print("%s[]" % p[1])
+        pass
 
     def p_statement(self, p):
         '''
