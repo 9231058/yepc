@@ -17,11 +17,15 @@ class YEPCParser:
 
     precedence = (
         ('left', 'EXP_OP'),
-        ('left', 'IF_KW', 'ELSE_KW'),
-        ('left', 'OR_KW', 'AND_KW'),
-        ('left', 'REL_OP'),
-        ('left', 'MATH_OP'),
-        ('left', 'NOT_KW')
+        ('left', 'OR_KW', 'ORELSE'),
+        ('left', 'AND_KW', 'ANDTHEN'),
+        ('left', 'EQ', 'NE'),
+        ('left', 'LT', 'GT', 'LE', 'GE'),
+        ('left', 'PLUS', 'MINUS'),
+        ('left', 'REM'),
+        ('left', 'MULT', 'DIV'),
+        ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM', 'UDEC', 'UINC'),
+        ('nonassoc', 'ELSE_KW')
     )
 
     def p_program(self, p):
@@ -93,7 +97,6 @@ class YEPCParser:
     def p_type_specifier(self, p):
         '''
         typeSpecifier : returnTypeSpecifier
-                      | ID
         '''
         pass
 
@@ -142,8 +145,8 @@ class YEPCParser:
 
     def p_param_id(self, p):
         '''
-        paramId : ID
-                | ID BK_OPEN BK_CLOSE
+        paramId : ID BK_OPEN BK_CLOSE
+                | ID
         '''
         pass
 
@@ -228,10 +231,20 @@ class YEPCParser:
 
     def p_expression(self, p):
         '''
-        expression : mutable EXP_OP expression
-                   | mutable MATH_OP EXP_OP expression
+        expression : mutable assignop expression
                    | simpleExpression
-                   | mutable MATH_OP MATH_OP
+                   | mutable PLUS PLUS %prec UINC
+                   | mutable MINUS MINUS %prec UDEC
+        '''
+        pass
+
+    def p_assignop(self, p):
+        '''
+        assignop : PLUS EXP_OP %prec EXP_OP
+                 | MINUS EXP_OP %prec EXP_OP
+                 | MULT EXP_OP %prec EXP_OP
+                 | DIV EXP_OP %prec EXP_OP
+                 | EXP_OP %prec EXP_OP
         '''
         pass
 
@@ -239,30 +252,65 @@ class YEPCParser:
         '''
         simpleExpression : simpleExpression OR_KW simpleExpression
                          | simpleExpression AND_KW simpleExpression
-                         | simpleExpression OR_KW ELSE_KW simpleExpression
-                         | simpleExpression AND_KW THEN_KW simpleExpression
+                         | simpleExpression orelse simpleExpression
+                         | simpleExpression andthen simpleExpression
                          | NOT_KW simpleExpression
                          | relExpression
         '''
         pass
 
+    def p_orelse(self, p):
+        '''
+        orelse : OR_KW ELSE_KW %prec ORELSE
+        '''
+        pass
+
+    def p_andthen(self, p):
+        '''
+        andthen : AND_KW THEN_KW %prec ANDTHEN
+        '''
+        pass
+
     def p_rel_expression(self, p):
         '''
-        relExpression : mathlogicExpression REL_OP mathlogicExpression
+        relExpression : mathlogicExpression relop mathlogicExpression
                       | mathlogicExpression
+        '''
+        pass
+
+    def p_relop(self, p):
+        '''
+        relop : LE
+              | LT
+              | GT
+              | GE
+              | EQ
+              | NE
         '''
         pass
 
     def p_mathlogic_expression(self, p):
         '''
-        mathlogicExpression : mathlogicExpression MATH_OP mathlogicExpression
+        mathlogicExpression : mathlogicExpression mathop mathlogicExpression
                             | unaryExpression
+        '''
+        pass
+
+    def p_mathop(self, p):
+        '''
+        mathop : PLUS
+               | MINUS
+               | MULT
+               | DIV
+               | REM
         '''
         pass
 
     def p_unary_expression(self, p):
         '''
-        unaryExpression : MATH_OP unaryExpression
+        unaryExpression : MINUS unaryExpression %prec UMINUS
+                        | RANDOM unaryExpression
+                        | MULT unaryExpression %prec UMULT
                         | factor
         '''
         pass
