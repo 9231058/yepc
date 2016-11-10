@@ -18,7 +18,10 @@ class YEPCLexer:
         'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
         'STATIC_KW', 'NOT_KW', 'AND_KW', 'OR_KW',
         'ID', 'FAKE_ID',
-        'NUMCONST', 'CHARCONST', 'REL_OP', 'MATH_OP', 'EXP_OP', 'REALCONST',
+        'NUMCONST', 'CHARCONST',
+        'LE', 'LT', 'GT', 'GE', 'EQ', 'NE',
+        'PLUS', 'MINUS', 'MULT', 'REM', 'DIV', 'RANDOM',
+        'EXP_OP', 'REALCONST',
         'COMMENTS',
         'TRUE', 'FALSE',
         'SEMICOLON', 'COLON', 'DOT', 'COMMA',
@@ -73,8 +76,18 @@ class YEPCLexer:
     t_CHAR_T = r'char'
 
     # Operators
-    t_REL_OP = r'\.eq | \.gt | \.ge | \.lt | \.le | \.ne'
-    t_MATH_OP = r'\+ | \- | \* | \/ | % | \?'
+    t_EQ = r'\.eq'
+    t_GT = r'\.gt'
+    t_GE = r'\.ge'
+    t_LT = '\.lt'
+    t_LE = '\.le'
+    t_NE = '\.ne'
+    t_PLUS = r'\+'
+    t_MINUS = r'\-'
+    t_MULT = r'\*'
+    t_DIV = r'\/'
+    t_REM = r'%'
+    t_RANDOM = r'\?'
     t_EXP_OP = r'='
 
     # etc
