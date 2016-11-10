@@ -97,6 +97,7 @@ class YEPCParser:
     def p_type_specifier(self, p):
         '''
         typeSpecifier : returnTypeSpecifier
+                      | RECORD_KW ID
         '''
         pass
 
@@ -231,20 +232,14 @@ class YEPCParser:
 
     def p_expression(self, p):
         '''
-        expression : mutable assignop expression
+        expression : mutable EXP_OP expression %prec EXP_OP
+                   | mutable PLUS EXP_OP expression %prec EXP_OP
+                   | mutable MINUS EXP_OP %prec EXP_OP
+                   | mutable MULT EXP_OP %prec EXP_OP
+                   | mutable DIV EXP_OP %prec EXP_OP
                    | simpleExpression
                    | mutable PLUS PLUS %prec UINC
                    | mutable MINUS MINUS %prec UDEC
-        '''
-        pass
-
-    def p_assignop(self, p):
-        '''
-        assignop : PLUS EXP_OP %prec EXP_OP
-                 | MINUS EXP_OP %prec EXP_OP
-                 | MULT EXP_OP %prec EXP_OP
-                 | DIV EXP_OP %prec EXP_OP
-                 | EXP_OP %prec EXP_OP
         '''
         pass
 
