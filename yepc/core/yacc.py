@@ -17,8 +17,11 @@ class YEPCParser:
 
     precedence = (
         ('left', 'EXP_OP'),
+        ('left', 'IF_KW', 'ELSE_KW'),
         ('left', 'OR_KW', 'AND_KW'),
-        ('left', 'MATH_OP')
+        ('left', 'REL_OP'),
+        ('left', 'MATH_OP'),
+        ('left', 'NOT_KW')
     )
 
     def p_program(self, p):
