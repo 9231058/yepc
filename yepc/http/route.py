@@ -68,6 +68,6 @@ def yacc_handler():
     l = lexer.build()
     p = parser.build()
 
-    p.parse(data, lexer=l)
+    p.parse(data, lexer=l, debug=True)
 
     return json.dumps(result)
