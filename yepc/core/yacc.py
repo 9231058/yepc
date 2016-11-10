@@ -17,15 +17,15 @@ class YEPCParser:
 
     precedence = (
         ('left', 'EXP_OP'),
-        ('left', 'OR_KW', 'ORELSE'),
-        ('left', 'AND_KW', 'ANDTHEN'),
+        ('left', 'OR_KW'),
+        ('left', 'AND_KW'),
         ('left', 'EQ', 'NE'),
         ('left', 'LT', 'GT', 'LE', 'GE'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'REM'),
         ('left', 'MULT', 'DIV'),
         ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM', 'UDEC', 'UINC'),
-        ('nonassoc', 'ELSE_KW')
+        ('nonassoc', 'ELSE_KW'),
     )
 
     def p_program(self, p):
@@ -247,22 +247,10 @@ class YEPCParser:
         '''
         simpleExpression : simpleExpression OR_KW simpleExpression
                          | simpleExpression AND_KW simpleExpression
-                         | simpleExpression orelse simpleExpression
-                         | simpleExpression andthen simpleExpression
+                         | simpleExpression OR_KW ELSE_KW simpleExpression
+                         | simpleExpression AND_KW THEN_KW simpleExpression
                          | NOT_KW simpleExpression
                          | relExpression
-        '''
-        pass
-
-    def p_orelse(self, p):
-        '''
-        orelse : OR_KW ELSE_KW %prec ORELSE
-        '''
-        pass
-
-    def p_andthen(self, p):
-        '''
-        andthen : AND_KW THEN_KW %prec ANDTHEN
         '''
         pass
 
