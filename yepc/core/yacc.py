@@ -200,14 +200,14 @@ class YEPCParser:
 
     def p_case_element(self, p):
         '''
-        caseElement : CASE_KW NUMCONST COLON statement SEMICOLON
-                    | caseElement CASE_KW NUMCONST COLON statement SEMICOLON
+        caseElement : CASE_KW NUMCONST COLON statement
+                    | caseElement CASE_KW NUMCONST COLON statement
         '''
         pass
 
     def p_default_element(self, p):
         '''
-        defaultElement : DEFAULT_KW COLON statement SEMICOLON
+        defaultElement : DEFAULT_KW COLON statement
                        | empty
         '''
         pass
