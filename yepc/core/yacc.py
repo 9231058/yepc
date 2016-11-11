@@ -18,13 +18,16 @@ class YEPCParser:
     precedence = (
         ('left', 'EXP_OP'),
         ('left', 'OR_KW'),
+        ('left', 'ORELSE'),
         ('left', 'AND_KW'),
+        ('left', 'ANDTHEN'),
         ('left', 'EQ', 'NE'),
         ('left', 'LT', 'GT', 'LE', 'GE'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'REM'),
         ('left', 'MULT', 'DIV'),
         ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM', 'UDEC', 'UINC'),
+        ('nonassoc', 'IFTHEN'),
         ('nonassoc', 'ELSE_KW'),
     )
 
@@ -191,7 +194,7 @@ class YEPCParser:
 
     def p_selection_stmt(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement
+        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement %prec IFTHEN
                       | IF_KW PR_OPEN simpleExpression PR_CLOSE statement ELSE_KW statement
                       | SWITCH_KW PR_OPEN simpleExpression PR_CLOSE caseElement defaultElement END_KW
         '''
@@ -247,8 +250,8 @@ class YEPCParser:
         '''
         simpleExpression : simpleExpression OR_KW simpleExpression
                          | simpleExpression AND_KW simpleExpression
-                         | simpleExpression OR_KW ELSE_KW simpleExpression
-                         | simpleExpression AND_KW THEN_KW simpleExpression
+                         | simpleExpression OR_KW ELSE_KW simpleExpression %prec ORELSE
+                         | simpleExpression AND_KW THEN_KW simpleExpression %prec ANDTHEN
                          | NOT_KW simpleExpression
                          | relExpression
         '''
