@@ -3,7 +3,7 @@ record #po11 {
 }
 
 record #li11 {
-	#po11 #xx11, #yy11;
+	record #po11 #xx11, #yy11;
 }
 
 int #at11 (int #ba12, #ca23[]; bool #do43, #el32; int #fo12)
@@ -31,7 +31,7 @@ int #at11 (int #ba12, #ca23[]; bool #do43, #el32; int #fo12)
         	}
     	}
 	#fo12 = ?5;
-	switch (#fo12) {
+	switch (#fo12)
 		case 0:
 			#fo12++;
 			break;
@@ -40,7 +40,7 @@ int #at11 (int #ba12, #ca23[]; bool #do43, #el32; int #fo12)
 			break;
 		default:
 			break;
-	}
+	end
     	return (#fo12+#ba12 *#ca23 [#ba12])/- #fo12;
 }
 // note that functions are defined using a statement
