@@ -275,18 +275,12 @@ class YEPCParser:
 
     def p_mathlogic_expression(self, p):
         '''
-        mathlogicExpression : mathlogicExpression mathop mathlogicExpression
+        mathlogicExpression : mathlogicExpression PLUS mathlogicExpression
+                            | mathlogicExpression MINUS mathlogicExpression
+                            | mathlogicExpression MULT mathlogicExpression
+                            | mathlogicExpression REM mathlogicExpression
+                            | mathlogicExpression DIV mathlogicExpression
                             | unaryExpression
-        '''
-        pass
-
-    def p_mathop(self, p):
-        '''
-        mathop : PLUS
-               | MINUS
-               | MULT
-               | DIV
-               | REM
         '''
         pass
 
