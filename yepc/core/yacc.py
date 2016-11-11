@@ -16,17 +16,15 @@ class YEPCParser:
     tokens = YEPCLexer.tokens
 
     precedence = (
-        ('left', 'EXP_OP'),
-        ('left', 'OR_KW'),
-        ('left', 'ORELSE'),
-        ('left', 'AND_KW'),
-        ('left', 'ANDTHEN'),
+        ('left', 'OR_KW', 'ORELSE'),
+        ('left', 'AND_KW', 'ANDTHEN'),
         ('left', 'EQ', 'NE'),
         ('left', 'LT', 'GT', 'LE', 'GE'),
         ('left', 'PLUS', 'MINUS'),
         ('left', 'REM'),
         ('left', 'MULT', 'DIV'),
-        ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM', 'UDEC', 'UINC'),
+        ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM',
+         'MINUSMINUS', 'PLUSPLUS'),
         ('nonassoc', 'IFTHEN'),
         ('nonassoc', 'ELSE_KW'),
     )
@@ -235,14 +233,14 @@ class YEPCParser:
 
     def p_expression(self, p):
         '''
-        expression : mutable EXP_OP expression %prec EXP_OP
-                   | mutable PLUS EXP_OP expression %prec EXP_OP
-                   | mutable MINUS EXP_OP %prec EXP_OP
-                   | mutable MULT EXP_OP %prec EXP_OP
-                   | mutable DIV EXP_OP %prec EXP_OP
+        expression : mutable EXP expression
+                   | mutable PLUSEXP expression
+                   | mutable MINUSEXP expression
+                   | mutable MULTEXP expression
+                   | mutable DIVEXP expression
                    | simpleExpression
-                   | mutable PLUS PLUS %prec UINC
-                   | mutable MINUS MINUS %prec UDEC
+                   | mutable PLUSPLUS
+                   | mutable MINUSMINUS
         '''
         pass
 
