@@ -31,6 +31,7 @@ class YEPCParser:
 
     def p_program(self, p):
         'program : declarationList'
+        print("Rule 1: program -> declarationList")
         pass
 
     def p_declaration_list(self, p):
@@ -38,6 +39,10 @@ class YEPCParser:
         declarationList : declarationList declaration
                         | declaration
         '''
+        if(len(p) == 3):
+            print("Rule 2: declarationList -> declarationList declaration")
+        else:
+            print("Rule 3: declarationList -> declaration")
         pass
 
     def p_declaration(self, p):
