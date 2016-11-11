@@ -38,7 +38,7 @@ class YEPCParser:
         declarationList : declarationList declaration
                         | declaration
         '''
-        if(len(p) == 3):
+        if len(p) == 3:
             print("Rule 2: declarationList -> declarationList declaration")
         else:
             print("Rule 3: declarationList -> declaration")
@@ -65,27 +65,29 @@ class YEPCParser:
         '''
         recDeclaration : RECORD_KW ID BR_OPEN localDeclarations BR_CLOSE
         '''
-        print("Rule 7: recDeclaration -> RECORD_KW ID { localDeclarations }")
+        print("Rule 7: recDeclaration -> RECORD_KW ID {localDeclarations}")
 
     def p_var_declaration(self, p):
         '''
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
         '''
-        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList ;")
+        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
 
     def p_scoped_var_declaration(self, p):
         '''
         scopedVarDeclaration : scopedTypeSpecifier varDeclarationList SEMICOLON
         '''
-        print("Rule 9: scopedVarDeclaration -> scopedTypeSpecifier varDeclarationList ;")
+        print("Rule 9: scopedVarDeclaration ->",
+              "scopedTypeSpecifier varDeclarationList;")
 
     def p_var_declaration_list(self, p):
         '''
         varDeclarationList : varDeclarationList COMMA varDeclarationInitialize
                            | varDeclarationInitialize
         '''
-        if(len(p) == 4):
-            print("Rule 10: varDeclarationList -> varDeclarationList , varDeclarationInitialize")
+        if len(p) == 4:
+            print("Rule 10: varDeclarationList ->",
+                  "varDeclarationList, varDeclarationInitialize")
         else:
             print("Rule 11: varDeclarationList -> varDeclarationInitialize")
 
@@ -94,10 +96,11 @@ class YEPCParser:
         varDeclarationInitialize : varDeclarationId
                                  | varDeclarationId COLON simpleExpression
         '''
-        if(len(p) == 2):
+        if len(p) == 2:
             print("Rule 12: varDeclarationInitialize -> varDeclarationId")
         else:
-            print("Rule 13: varDeclarationInitialize -> varDeclarationId : simpleExpression")
+            print("Rule 13: varDeclarationInitialize ->",
+                  "varDeclarationId: simpleExpression")
 
     def p_var_declaration_id(self, p):
         '''
@@ -105,7 +108,7 @@ class YEPCParser:
                          | ID BK_OPEN NUMCONST BK_CLOSE
 
         '''
-        if(len(p) == 2):
+        if len(p) == 2:
             print("Rule 14: varDeclarationId -> ID")
         else:
             print("Rule 15: varDeclarationId -> ID [ NUMCONST ]")
@@ -115,7 +118,7 @@ class YEPCParser:
         scopedTypeSpecifier : STATIC_KW typeSpecifier
                             | typeSpecifier
         '''
-        if(len(p) == 3):
+        if len(p) == 3:
             print("Rule 16: scopedTypeSpecifier -> STATIC_KW typeSpecifier")
         else:
             print("Rule 17: scopedTypeSpecifier -> typeSpecifier")
@@ -125,7 +128,7 @@ class YEPCParser:
         typeSpecifier : returnTypeSpecifier
                       | RECORD_KW ID
         '''
-        if(len(p) == 2):
+        if len(p) == 2:
             print("Rule 18: typeSpecifier -> returnTypeSpecifier")
         else:
             print("Rule 19: typeSpecifier -> RECORD_KW ID")
@@ -159,10 +162,11 @@ class YEPCParser:
         funDeclaration : typeSpecifier ID PR_OPEN params PR_CLOSE statement
                        | ID PR_OPEN params PR_CLOSE statement
         '''
-        if(len(p) == 7):
-            print("Rule 24 funDeclaration -> typeSpecifier ID ( params ) statement")
+        if len(p) == 7:
+            print("Rule 24 funDeclaration ->",
+                  "typeSpecifier ID (params) statement")
         else:
-            print("Rule 25: funDeclaration -> ID ( params ) statement")
+            print("Rule 25: funDeclaration -> ID (params) statement")
 
     def p_params_1(self, p):
         '''
@@ -176,14 +180,13 @@ class YEPCParser:
         '''
         print("Rule 27: params -> empty")
 
-
     def p_param_list(self, p):
         '''
         paramList : paramList SEMICOLON paramTypeList
                   | paramTypeList
         '''
-        if(len(p) == 4):
-            print("Rule 28: paramList -> paramList ; paramTypeList")
+        if len(p) == 4:
+            print("Rule 28: paramList -> paramList; paramTypeList")
         else:
             print("Rule 29: paramList -> paramTypeList")
 
@@ -198,7 +201,7 @@ class YEPCParser:
         paramIdList : paramIdList COMMA paramId
                     | paramId
         '''
-        if(len(p) == 4):
+        if len(p) == 4:
             print("Rule 31: paramIdList -> paramIdList , paramId")
         else:
             print("Rule 32: paramIdList -> paramId")
@@ -208,7 +211,7 @@ class YEPCParser:
         paramId : ID BK_OPEN BK_CLOSE
                 | ID
         '''
-        if(len(p) == 4):
+        if len(p) == 4:
             print("Rule 33: paramId -> ID [ ]")
         else:
             print("Rule 34: paramId -> ID")
@@ -253,24 +256,26 @@ class YEPCParser:
         '''
         compoundStmt : BR_OPEN localDeclarations statementList BR_CLOSE
         '''
-        print("Rule 41: compoundStmt -> { localDeclarations statementList }")
+        print("Rule 41: compoundStmt -> {localDeclarations statementList}")
 
     def p_local_declarations(self, p):
         '''
         localDeclarations : localDeclarations scopedVarDeclaration
                           | empty
         '''
-        if(len(p) == 3):
-            print("Rule 42: localDeclarations -> localDeclarations scopedVarDeclaration")
+        if len(p) == 3:
+            print("Rule 42: localDeclarations ->",
+                  "localDeclarations scopedVarDeclaration")
         else:
-            print("Rule 43: localDeclarations -> localDeclarations scopedVarDeclaration")
+            print("Rule 43: localDeclarations ->",
+                  "localDeclarations scopedVarDeclaration")
 
     def p_statement_list(self, p):
         '''
         statementList : statementList statement
                       | empty
         '''
-        if(len(p) == 3):
+        if len(p) == 3:
             print("Rule 44: statementList -> statementList statement")
         else:
             print("Rule 45: statementList -> empty")
@@ -280,8 +285,8 @@ class YEPCParser:
         expressionStmt : expression SEMICOLON
                        | SEMICOLON
         '''
-        if(len(p) == 3):
-            print("Rule 46: expressionStmt -> expression ;")
+        if len(p) == 3:
+            print("Rule 46: expressionStmt -> expression;")
         else:
             print("Rule 47: expressionStmt -> ;")
 
@@ -289,37 +294,41 @@ class YEPCParser:
         '''
         selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement %prec IFTHEN
         '''
-        print("Rule 48: selectionStmt -> IF_KW ( simpleExpression ) statement")
+        print("Rule 48: selectionStmt ->",
+              "IF_KW (simpleExpression) statement")
 
     def p_selection_stmt_2(self, p):
         '''
         selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement ELSE_KW statement
         '''
-        print("Rule 49: selectionStmt -> IF_KW ( simpleExpression ) statement ELSE_KW statement")
+        print("Rule 49: selectionStmt ->",
+              "IF_KW (simpleExpression) statement ELSE_KW statement")
 
     def p_selection_stmt_3(self, p):
         '''
         selectionStmt : SWITCH_KW PR_OPEN simpleExpression PR_CLOSE caseElement defaultElement END_KW
         '''
-        print("Rule 50: selectionStmt ->  SWITCH_KW ( simpleExpression ) caseElement defaultElement END_KW")
+        print("Rule 50: selectionStmt ->",
+              "SWITCH_KW (simpleExpression) caseElement defaultElement END_KW")
 
     def p_case_element(self, p):
         '''
         caseElement : CASE_KW NUMCONST COLON statement
                     | caseElement CASE_KW NUMCONST COLON statement
         '''
-        if(len(p) == 5):
-            print("Rule 51: caseElement -> CASE_KW NUMCONST : statement")
+        if len(p) == 5:
+            print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
         else:
-            print("Rule 52: caseElement -> caseElement CASE_KW NUMCONST : statement")
+            print("Rule 52: caseElement ->",
+                  "caseElement CASE_KW NUMCONST: statement")
 
     def p_default_element(self, p):
         '''
         defaultElement : DEFAULT_KW COLON statement
                        | empty
         '''
-        if(len(p) == 4):
-            print("Rule 53: defaultElement -> DEFAULT_KW : statement")
+        if len(p) == 4:
+            print("Rule 53: defaultElement -> DEFAULT_KW: statement")
         else:
             print("Rule 54: defaultElement -> empty")
 
@@ -327,14 +336,15 @@ class YEPCParser:
         '''
         iterationStmt : WHILE_KW PR_OPEN simpleExpression PR_CLOSE statement
         '''
-        print("Rule 55: iterationStmt -> WHILE_KW ( simpleExpression ) statement")
+        print("Rule 55: iterationStmt ->",
+              "WHILE_KW (simpleExpression) statement")
 
     def p_return_stmt(self, p):
         '''
         returnStmt : RETURN_KW SEMICOLON
                    | RETURN_KW expression SEMICOLON
         '''
-        if(len(p) == 3):
+        if len(p) == 3:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
@@ -393,30 +403,33 @@ class YEPCParser:
         '''
         print("Rule 66: expression -> mutable MINUSMINUS")
 
-
     def p_simple_expression_1(self, p):
         '''
         simpleExpression : simpleExpression OR_KW simpleExpression
         '''
-        print("Rule 67: simpleExpression -> simpleExpression OR_KW simpleExpression")
+        print("Rule 67: simpleExpression ->",
+              "simpleExpression OR_KW simpleExpression")
 
     def p_simple_expression_2(self, p):
         '''
         simpleExpression : simpleExpression AND_KW simpleExpression
         '''
-        print("Rule 68: simpleExpression -> simpleExpression AND_KW simpleExpression")
+        print("Rule 68: simpleExpression ->",
+              "simpleExpression AND_KW simpleExpression")
 
     def p_simple_expression_3(self, p):
         '''
         simpleExpression : simpleExpression OR_KW ELSE_KW simpleExpression %prec ORELSE
         '''
-        print("Rule 69: simpleExpression -> simpleExpression OR_KW ELSE_KW simpleExpression")
+        print("Rule 69: simpleExpression ->",
+              "simpleExpression OR_KW ELSE_KW simpleExpression")
 
     def p_simple_expression_4(self, p):
         '''
         simpleExpression : simpleExpression AND_KW THEN_KW simpleExpression %prec ANDTHEN
         '''
-        print("Rule 70: simpleExpression -> simpleExpression AND_KW THEN_KW simpleExpression")
+        print("Rule 70: simpleExpression ->",
+              "simpleExpression AND_KW THEN_KW simpleExpression")
 
     def p_simple_expression_5(self, p):
         '''
@@ -435,8 +448,9 @@ class YEPCParser:
         relExpression : mathlogicExpression relop mathlogicExpression
                       | mathlogicExpression
         '''
-        if(len(p) == 4):
-            print("Rule 73: relExpression -> mathlogicExpression relop mathlogicExpression")
+        if len(p) == 4:
+            print("Rule 73: relExpression ->",
+                  "mathlogicExpression relop mathlogicExpression")
         else:
             print("Rule 74: relExpression -> mathlogicExpression")
 
@@ -476,33 +490,82 @@ class YEPCParser:
         '''
         print("Rule 80: relop -> NE")
 
-    def p_mathlogic_expression(self, p):
+    def p_mathlogic_expression_1(self, p):
         '''
         mathlogicExpression : mathlogicExpression PLUS mathlogicExpression
-                            | mathlogicExpression MINUS mathlogicExpression
-                            | mathlogicExpression MULT mathlogicExpression
-                            | mathlogicExpression REM mathlogicExpression
-                            | mathlogicExpression DIV mathlogicExpression
-                            | unaryExpression
         '''
+        print("Rule 81: mathlogicExpression ->",
+              "mathlogicExpression PLUS mathlogicExpression")
 
+    def p_mathlogic_expression_2(self, p):
+        '''
+        mathlogicExpression : mathlogicExpression MINUS mathlogicExpression
+        '''
+        print("Rule 82: mathlogicExpression ->",
+              "mathlogicExpression MINUS mathlogicExpression")
 
+    def p_mathlogic_expression_3(self, p):
+        '''
+        mathlogicExpression : mathlogicExpression MULT mathlogicExpression
+        '''
+        print("Rule 83: mathlogicExpression ->",
+              "mathlogicExpression MULT mathlogicExpression")
 
-    def p_unary_expression(self, p):
+    def p_mathlogic_expression_4(self, p):
+        '''
+        mathlogicExpression : mathlogicExpression REM mathlogicExpression
+        '''
+        print("Rule 84: mathlogicExpression ->",
+              "mathlogicExpression REM mathlogicExpression")
+
+    def p_mathlogic_expression_5(self, p):
+        '''
+        mathlogicExpression : mathlogicExpression DIV mathlogicExpression
+        '''
+        print("Rule 85: mathlogicExpression ->",
+              "mathlogicExpression DIV mathlogicExpression")
+
+    def p_mathlogic_expression_6(self, p):
+        '''
+        mathlogicExpression : unaryExpression
+        '''
+        print("Rule 86: mathlogicExpression -> unaryExpression")
+
+    def p_unary_expression_1(self, p):
         '''
         unaryExpression : MINUS unaryExpression %prec UMINUS
-                        | RANDOM unaryExpression
-                        | MULT unaryExpression %prec UMULT
-                        | factor
         '''
-        pass
+        print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
-    def p_factor(self, p):
+    def p_unary_expression_2(self, p):
+        '''
+        unaryExpression : RANDOM unaryExpression
+        '''
+        print("Rule 88: unaryExpression -> RANDOM unaryExpression")
+
+    def p_unary_expression_3(self, p):
+        '''
+        unaryExpression : MULT unaryExpression %prec UMULT
+        '''
+        print("Rule 89: unaryExpression -> MULT unaryExpression")
+
+    def p_unary_expression_4(self, p):
+        '''
+        unaryExpression : factor
+        '''
+        print("Rule 90: unaryExpression -> factor")
+
+    def p_factor_1(self, p):
         '''
         factor : immutable
-               | mutable
         '''
-        pass
+        print("Rule 91: factor -> immutable")
+
+    def p_factor_2(self, p):
+        '''
+        factor : mutable
+        '''
+        print("Rule 92: factor -> mutable")
 
     def p_mutable(self, p):
         '''
@@ -510,45 +573,88 @@ class YEPCParser:
                 | mutable BK_OPEN expression BK_CLOSE
                 | mutable DOT ID
         '''
-        pass
+        if len(p) == 2:
+            print("Rule 93: mutable -> ID")
+        elif len(p) == 5:
+            print("Rule 94: mutable -> mutable[expression]")
+        else:
+            print("Rule 95: mutbale -> mutable.ID")
 
-    def p_immutable(self, p):
+    def p_immutable_1(self, p):
         '''
         immutable : PR_OPEN expression PR_CLOSE
-                  | call
-                  | constant
         '''
-        pass
+        print("Rule 96: immutable -> (expression)")
+
+    def p_immutable_2(self, p):
+        '''
+        immutable : call
+        '''
+        print("Rule 97: immutable -> call")
+
+    def p_immutable_3(self, p):
+        '''
+        immutable : constant
+        '''
+        print("Rule 98: immutable -> constant")
 
     def p_call(self, p):
         '''
         call : ID PR_OPEN args PR_CLOSE
         '''
-        pass
+        print("Rule 99: call -> ID(args)")
 
-    def p_args(self, p):
+    def p_args_1(self, p):
         '''
         args : argList
-             | empty
         '''
-        pass
+        print("Rule 100: args -> argList")
+
+    def p_args_2(self, p):
+        '''
+        args : empty
+        '''
+        print("Rule 101: args -> empty")
 
     def p_arg_list(self, p):
         '''
         argList : argList COMMA expression
                 | expression
         '''
-        pass
+        if len(p) == 4:
+            print("Rule 102: argList -> argList, expression")
+        else:
+            print("Rule 103: argList -> expression")
 
-    def p_constant(self, p):
+    def p_constant_1(self, p):
         '''
         constant : NUMCONST
-                 | REALCONST
-                 | CHARCONST
-                 | TRUE
-                 | FALSE
         '''
-        pass
+        print("Rule 104: constant -> NUMCONST")
+
+    def p_constant_2(self, p):
+        '''
+        constant : REALCONST
+        '''
+        print("Rule 105: constant -> REALCONST")
+
+    def p_constant_3(self, p):
+        '''
+        constant : CHARCONST
+        '''
+        print("Rule 106: constant -> CHARCONST")
+
+    def p_constant_4(self, p):
+        '''
+        constant : TRUE
+        '''
+        print("Rule 107: constant -> TRUE")
+
+    def p_constant_5(self, p):
+        '''
+        constant : FALSE
+        '''
+        print("Rule 108: constant -> FALSE")
 
     # Error rule for syntax errors
     def p_error(self, p):
