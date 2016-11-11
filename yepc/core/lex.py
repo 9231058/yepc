@@ -18,10 +18,11 @@ class YEPCLexer:
         'WHILE_KW', 'DEFAULT_KW', 'RETURN_KW', 'BREAK_KW', 'RECORD_KW',
         'STATIC_KW', 'NOT_KW', 'AND_KW', 'OR_KW',
         'ID', 'FAKE_ID',
-        'NUMCONST', 'CHARCONST',
+        'NUMCONST', 'CHARCONST', 'REALCONST',
         'LE', 'LT', 'GT', 'GE', 'EQ', 'NE',
         'PLUS', 'MINUS', 'MULT', 'REM', 'DIV', 'RANDOM',
-        'EXP_OP', 'REALCONST',
+        'PLUSPLUS', 'MINUSMINUS',
+        'EXP', 'PLUSEXP', 'MINUSEXP', 'MULTEXP', 'DIVEXP',
         'COMMENTS',
         'TRUE', 'FALSE',
         'SEMICOLON', 'COLON', 'DOT', 'COMMA',
@@ -88,7 +89,13 @@ class YEPCLexer:
     t_DIV = r'\/'
     t_REM = r'%'
     t_RANDOM = r'\?'
-    t_EXP_OP = r'='
+    t_PLUSPLUS = r'\+\+'
+    t_MINUSMINUS = r'\-\-'
+    t_EXP = r'='
+    t_PLUSEXP = r'\+='
+    t_MINUSEXP = r'\-='
+    t_MULTEXP = r'\*='
+    t_DIVEXP = r'\/='
 
     # etc
     t_ID = r'\#[a-zA-Z]{2}[0-9]{2}'
