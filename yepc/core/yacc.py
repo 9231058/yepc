@@ -29,6 +29,9 @@ class YEPCParser:
         ('nonassoc', 'ELSE_KW'),
     )
 
+    def __inti__(self):
+        self.quadruples = []
+
     def p_program(self, p):
         'program : declarationList'
         print("Rule 1: program -> declarationList")
