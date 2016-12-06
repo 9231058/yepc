@@ -10,6 +10,7 @@
 # =======================================
 import ply.yacc as yacc
 from .lex import YEPCLexer
+from ..domain.qr import Quadruple
 
 
 class YEPCParser:
@@ -29,7 +30,7 @@ class YEPCParser:
         ('nonassoc', 'ELSE_KW'),
     )
 
-    def __inti__(self):
+    def __init__(self):
         self.quadruples = []
 
     def p_program(self, p):
@@ -538,6 +539,9 @@ class YEPCParser:
         '''
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
+        # p[0].place = new_temp()
+        self.quadruples.append(Quadruple(op='-', arg1=p[2].place, arg2='',
+                                         result=p[0].place))
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
     def p_unary_expression_2(self, p):
@@ -577,6 +581,7 @@ class YEPCParser:
                 | mutable DOT ID
         '''
         if len(p) == 2:
+            # p[0].place = new_temp()
             print("Rule 93: mutable -> ID")
         elif len(p) == 5:
             print("Rule 94: mutable -> mutable[expression]")
