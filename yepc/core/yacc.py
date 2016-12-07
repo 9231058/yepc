@@ -33,7 +33,7 @@ class YEPCParser:
 
     def __init__(self):
         self.quadruples = []
-        self.temp = SymbolTable()
+        self.symtable = SymbolTable()
 
     def p_program(self, p):
         'program : declarationList'
@@ -542,7 +542,7 @@ class YEPCParser:
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
-        p[0].place = self.temp.new_temp(p[2].type)
+        p[0].place = self.symtable.new_temp(p[2].type)
         p[0].type = p[2].type
         self.quadruples.append(Quadruple(op='-', arg1=p[2].place, arg2='',
                                          result=p[0].place))
@@ -552,11 +552,11 @@ class YEPCParser:
         unaryExpression : RANDOM unaryExpression
         '''
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
-        t = self.temp.new_temp('int')
+        t = self.symtable.new_temp('int')
         t.type = "int"
         self.quadruples.append(Quadruple(op='rand', arg1='', arg2='',
                                          result=t.place))
-        p[0].place = self.temp.new_temp('int')
+        p[0].place = self.symtable.new_temp('int')
         p[0].type = "int"
         self.quadruples.append(Quadruple(op='%', arg1=t.place, arg2=p[2].place,
                                          result=p[0].place))
