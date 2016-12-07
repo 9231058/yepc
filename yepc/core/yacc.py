@@ -11,6 +11,7 @@
 import ply.yacc as yacc
 from .lex import YEPCLexer
 from ..domain.qr import Quadruple
+from ..domain.temp import Temp
 
 
 class YEPCParser:
@@ -32,6 +33,7 @@ class YEPCParser:
 
     def __init__(self):
         self.quadruples = []
+        self.temp = Temp()
 
     def p_program(self, p):
         'program : declarationList'
@@ -539,16 +541,26 @@ class YEPCParser:
         '''
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
-        # p[0].place = new_temp()
+        print("Rule 87: unraryExpression -> MINUS unaryExpression")
+        p[0].place = self.temp.new_temp()
+        p[0].type = p[2].type
+        self.quadruples.append(Quadruple(oo=p[0].type, arg1=p[0].place, arg2='', result='')
         self.quadruples.append(Quadruple(op='-', arg1=p[2].place, arg2='',
                                          result=p[0].place))
-        print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
     def p_unary_expression_2(self, p):
         '''
         unaryExpression : RANDOM unaryExpression
         '''
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
+        t = self.temp.new_temp()
+        t.type = "int"
+        self.quadruples.append(Quadruple(oo=t.type, arg1=t.place, arg2='', result='')
+        self.quadruples.append(Quadruple(op='rand', arg1='', arg2='', result=t.place)
+        p[0].place = self.temp.new_temp()
+        p[0].type = "int"
+        self.quadruples.append(Quadruple(oo=p[0].type, arg1=p[0].place, arg2='', result='')
+        self.quadruples.append(Quadruple(op='%', arg1=t.place, arg2=p[2].place, result=p[0].place)
 
     def p_unary_expression_3(self, p):
         '''
