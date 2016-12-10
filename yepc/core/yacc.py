@@ -33,11 +33,18 @@ class YEPCParser:
 
     def __init__(self):
         self.quadruples = []
-        self.symtable = SymbolTable()
+        self.symtables = []
+        self.offsets = []
 
     def p_program(self, p):
-        'program : declarationList'
+        'program : programInitiator declarationList'
         print("Rule 1: program -> declarationList")
+
+    def p_program_initiator(self, p):
+        'programInitiator : empty'
+        print("Rule *: programInitiator -> empty")
+        self.symtables.append(SymbolTable(None))
+        self.offsets.append(0)
 
     def p_declaration_list(self, p):
         '''
@@ -542,7 +549,7 @@ class YEPCParser:
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
-        p[0].place = self.symtable.new_temp(p[2].type)
+        p[0].place = self.symtables[-1].new_temp(p[2].type)
         p[0].type = p[2].type
         self.quadruples.append(Quadruple(op='-', arg1=p[2].place, arg2='',
                                          result=p[0].place))
@@ -552,11 +559,11 @@ class YEPCParser:
         unaryExpression : RANDOM unaryExpression
         '''
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
-        t = self.symtable.new_temp('int')
+        t = self.symtables[-1].new_temp('int')
         t.type = "int"
         self.quadruples.append(Quadruple(op='rand', arg1='', arg2='',
                                          result=t.place))
-        p[0].place = self.symtable.new_temp('int')
+        p[0].place = self.symtables[-1].new_temp('int')
         p[0].type = "int"
         self.quadruples.append(Quadruple(op='%', arg1=t.place, arg2=p[2].place,
                                          result=p[0].place))
