@@ -10,7 +10,7 @@
 # =======================================
 import ply.yacc as yacc
 from .lex import YEPCLexer
-from ..domain.qr import Quadruple
+from ..domain.qr import QuadRuple
 from ..domain.symtable import SymbolTable
 
 
