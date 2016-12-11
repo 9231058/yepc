@@ -562,6 +562,7 @@ class YEPCParser:
         '''
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
         t = YEPCEntity()
+        p[0] = YEPCEntity()
         t.place = self.symtables[-1].new_temp('int')
         t.type = "int"
         self.quadruples.append(QuadRuple(op='rand', arg1='', arg2='',
@@ -582,6 +583,7 @@ class YEPCParser:
         unaryExpression : factor
         '''
         print("Rule 90: unaryExpression -> factor")
+        p[0] = YEPCEntity()
 
     def p_factor_1(self, p):
         '''
