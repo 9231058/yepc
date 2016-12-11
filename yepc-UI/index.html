@@ -9,47 +9,69 @@
 
 <body>
 <div class="container">
-	<div class="page-header">
-		<h1>YEPC <small>Yet Another El Project - Compiler</small></h1>
-	</div>
-	<div class="row">
-		<form id="source">
-			<label>Source Area</label>
-			<textarea name="text" class="form-control" rows="5"></textarea>
-			<label for="file">Source File</label><input id="file" type="file">
-			<button type="button" class="btn btn-primary" v-on:click="fromFile">Load from File</button>
-		</form>
-	</div>
-	<div class="row">
-		<div class="col-md-6" id="lexer">
-			<h3>Lexer</h3>
-			<button type="button" class="btn btn-primary" v-on:click="tokenize">Tokenize</button>
-			<table class="table">
-				<thead>
-					<tr>
-						<td>#</td>
-						<td>Type</td>
-						<td>Value</td>
-						<td>Line No.</td>
-						<td>Lex Position</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(token, index) in tokens">
-						<td>{{ index }}</td>
-						<td>{{ token.type }}</td>
-						<td>{{ token.value }}</td>
-						<td>{{ token.lineno }}</td>
-						<td>{{ token.lexpos }}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div class="col-md-6" id="parser">
-			<h3>Parser</h3>
-            <button type="button" class="btn btn-primary" v-on:click="parse">Parse</button>
-		</div>
-	</div>
+  <div class="page-header">
+    <h1>YEPC <small>Yet Another El Project - Compiler</small></h1>
+  </div>
+  <div class="row">
+    <form id="source">
+      <label>Source Area</label>
+      <textarea name="text" class="form-control" rows="5"></textarea>
+      <label for="file">Source File</label><input id="file" type="file">
+      <button type="button" class="btn btn-primary" v-on:click="fromFile">Load from File</button>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col-md-6" id="lexer">
+      <h3>Lexer</h3>
+      <button type="button" class="btn btn-primary" v-on:click="tokenize">Tokenize</button>
+      <table class="table">
+        <thead>
+          <tr>
+            <td>#</td>
+            <td>Type</td>
+            <td>Value</td>
+            <td>Line No.</td>
+            <td>Lex Position</td>
+          </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(token, index) in tokens">
+          <td>{{ index }}</td>
+          <td>{{ token.type }}</td>
+          <td>{{ token.value }}</td>
+          <td>{{ token.lineno }}</td>
+          <td>{{ token.lexpos }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6" id="parser">
+      <h3>Parser</h3>
+      <button type="button" class="btn btn-primary" v-on:click="parse">Parse</button>
+      <table class="table">
+        <thead>
+          <tr>
+            <td>#</td>
+            <td>Result</td>
+            <td></td>
+            <td>Arg #1</td>
+            <td>Operator</td>
+            <td>Arg #2</td>
+          </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(quadruple, index) in quadruples">
+          <td>{{ index }}</td>
+          <td>{{ quadruple.result }}</td>
+          <td>=</td>
+          <td>{{ quadruple.arg_one }}</td>
+          <td>{{ quadruple.op }}</td>
+          <td>{{ quadruple.arg_two }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
