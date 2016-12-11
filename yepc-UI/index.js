@@ -30,13 +30,13 @@ var lexer = new Vue({
 var parser = new Vue({
   el: '#parser',
   data: {
-    tokens: []
+    quadruples: []
   },
   methods: {
     parse: function () {
       var form = $("#source").serialize()
       $.post('yacc', form, function (data, status) {
-        lexer.tokens = JSON.parse(data)
+        parser.quadruples = JSON.parse(data)
       })
     }
   }
