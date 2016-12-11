@@ -551,7 +551,7 @@ class YEPCParser:
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
         p[0].place = self.symtables[-1].new_temp(p[2].type)
         p[0].type = p[2].type
-        self.quadruples.append(Quadruple(op='-', arg1=p[2].place, arg2='',
+        self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
                                          result=p[0].place))
 
     def p_unary_expression_2(self, p):
@@ -561,11 +561,11 @@ class YEPCParser:
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
         t = self.symtables[-1].new_temp('int')
         t.type = "int"
-        self.quadruples.append(Quadruple(op='rand', arg1='', arg2='',
+        self.quadruples.append(QuadRuple(op='rand', arg1='', arg2='',
                                          result=t.place))
         p[0].place = self.symtables[-1].new_temp('int')
         p[0].type = "int"
-        self.quadruples.append(Quadruple(op='%', arg1=t.place, arg2=p[2].place,
+        self.quadruples.append(QuadRuple(op='%', arg1=t.place, arg2=p[2].place,
                                          result=p[0].place))
 
     def p_unary_expression_3(self, p):
