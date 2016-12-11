@@ -1,6 +1,6 @@
 # In The Name Of God
 # ========================================
-# [] File Name : yacc.py
+# [] File Name : parser.py
 #
 # [] Creation Date : 31-10-2016
 #
