@@ -18,14 +18,19 @@ class SymbolTable():
 
     '''
     def __init__(self, parent):
-        self.seq = 0
         self.symbols = {}
         self.header = {}
         self.parent = parent
+        self.temp_id_generator = self.temp_id_generator()
+
+    def temp_id_generator(self):
+        seq = 0
+        while True:
+            yield 'jj' + seq
+            seq += 1
 
     def new_temp(self, temp_type):
-        self.seq += 1
-        temp_id = 'jj' + self.seq
+        temp_id = next(self.temp_id_generator)
         self.symbols[temp_id] = temp_type
         return temp_id
 

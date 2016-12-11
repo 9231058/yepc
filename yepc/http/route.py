@@ -11,7 +11,7 @@ import json
 
 from . import app
 from ..core.lex import YEPCLexer
-from ..core.yacc import YEPCParser
+from ..core.parser import YEPCParser
 
 lexer = YEPCLexer()
 parser = YEPCParser()
