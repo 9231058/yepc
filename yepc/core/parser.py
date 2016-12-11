@@ -12,6 +12,7 @@ import ply.yacc as yacc
 from .lex import YEPCLexer
 from ..domain.qr import QuadRuple
 from ..domain.symtable import SymbolTable
+from ..domain.entity import YEPCEntity
 
 
 class YEPCParser:
@@ -549,6 +550,7 @@ class YEPCParser:
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
+        p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[2].type)
         p[0].type = p[2].type
         self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
@@ -559,7 +561,8 @@ class YEPCParser:
         unaryExpression : RANDOM unaryExpression
         '''
         print("Rule 88: unaryExpression -> RANDOM unaryExpression")
-        t = self.symtables[-1].new_temp('int')
+        t = YEPCEntity()
+        t.place = self.symtables[-1].new_temp('int')
         t.type = "int"
         self.quadruples.append(QuadRuple(op='rand', arg1='', arg2='',
                                          result=t.place))
