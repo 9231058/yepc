@@ -9,7 +9,7 @@
 
 
 class QuadRuple:
-    def __init__(self, op, arg_one, arg_two, result):
+    def __init__(self, op, arg1, arg_two, result):
         self.op = op
         self.arg_one = arg_one
         self.arg_two = arg_two
