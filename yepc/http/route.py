@@ -14,7 +14,6 @@ from ..core.lex import YEPCLexer
 from ..core.parser import YEPCParser
 
 lexer = YEPCLexer()
-parser = YEPCParser()
 
 
 # About
@@ -57,17 +56,27 @@ def lex_handler():
 
     return json.dumps(result)
 
-# YACC Phase
 
+# Parse + Interintermediate Code Generation Phase
 
 @app.route('/yacc', methods=['POST'])
 def yacc_handler():
     data = flask.request.form['text']
-    result = []
+    results = []
+
+    parser = YEPCParser()
 
     l = lexer.build()
     p = parser.build()
 
     p.parse(data, lexer=l, debug=False)
 
-    return json.dumps(result)
+    for q in parser.quadruples:
+        result = {}
+        result['result'] = q.result
+        result['op'] = q.op
+        result['arg_one'] = q.arg_one
+        result['arg_two'] = q.arg_two
+        results.append(result)
+
+    return json.dumps(results)
