@@ -86,6 +86,8 @@ class YEPCParser:
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
         '''
         print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
+        for (name, value) in p[2]:
+            self.symtables[-1].insert_variable(name, p[1])
 
     def p_scoped_var_declaration(self, p):
         '''
@@ -93,6 +95,8 @@ class YEPCParser:
         '''
         print("Rule 9: scopedVarDeclaration ->",
               "scopedTypeSpecifier varDeclarationList;")
+        for (name, value) in p[2]:
+            self.symtables[-1].insert_variable(name, p[1])
 
     def p_var_declaration_list(self, p):
         '''
@@ -102,8 +106,10 @@ class YEPCParser:
         if len(p) == 4:
             print("Rule 10: varDeclarationList ->",
                   "varDeclarationList, varDeclarationInitialize")
+            p[0] = [*p[1], p[3]]
         else:
             print("Rule 11: varDeclarationList -> varDeclarationInitialize")
+            p[0] = [p[1]]
 
     def p_var_declaration_initialize(self, p):
         '''
@@ -112,9 +118,11 @@ class YEPCParser:
         '''
         if len(p) == 2:
             print("Rule 12: varDeclarationInitialize -> varDeclarationId")
+            p[0] = (p[1], 0)
         else:
             print("Rule 13: varDeclarationInitialize ->",
                   "varDeclarationId: simpleExpression")
+            p[0] = (p[1], p[3])
 
     def p_var_declaration_id(self, p):
         '''
@@ -124,8 +132,10 @@ class YEPCParser:
         '''
         if len(p) == 2:
             print("Rule 14: varDeclarationId -> ID")
+            p[0] = p[1]
         else:
             print("Rule 15: varDeclarationId -> ID [ NUMCONST ]")
+            p[0] = '%s[%d]' % (p[1], p[3])
 
     def p_scoped_type_specifier(self, p):
         '''
@@ -134,8 +144,10 @@ class YEPCParser:
         '''
         if len(p) == 3:
             print("Rule 16: scopedTypeSpecifier -> STATIC_KW typeSpecifier")
+            p[0] = p[2]
         else:
             print("Rule 17: scopedTypeSpecifier -> typeSpecifier")
+            p[0] = p[1]
 
     def p_type_specifier(self, p):
         '''
@@ -144,32 +156,38 @@ class YEPCParser:
         '''
         if len(p) == 2:
             print("Rule 18: typeSpecifier -> returnTypeSpecifier")
+            p[0] = p[1]
         else:
             print("Rule 19: typeSpecifier -> RECORD_KW ID")
+            p[0] = p[2]
 
     def p_return_type_specifier_1(self, p):
         '''
         returnTypeSpecifier : INT_T
         '''
         print("Rule 20: returnTypeSpecifier -> INT_T")
+        p[0] = 'int'
 
     def p_return_type_specifier_2(self, p):
         '''
         returnTypeSpecifier : REAL_T
         '''
         print("Rule 21: returnTypeSpecifier -> REAL_T")
+        p[0] = 'real'
 
     def p_return_type_specifier_3(self, p):
         '''
         returnTypeSpecifier : BOOL_T
         '''
         print("Rule 22: returnTypeSpecifier -> BOOL_T")
+        p[0] = 'bool'
 
     def p_return_type_specifier_4(self, p):
         '''
         returnTypeSpecifier : CHAR_T
         '''
         print("Rule 23: returnTypeSpecifier -> CHAR_T")
+        p[0] = 'char'
 
     def p_fun_declaration(self, p):
         '''
@@ -583,19 +601,21 @@ class YEPCParser:
         unaryExpression : factor
         '''
         print("Rule 90: unaryExpression -> factor")
-        p[0] = YEPCEntity()
+        p[0] = p[1]
 
     def p_factor_1(self, p):
         '''
         factor : immutable
         '''
         print("Rule 91: factor -> immutable")
+        p[0] = p[1]
 
     def p_factor_2(self, p):
         '''
         factor : mutable
         '''
         print("Rule 92: factor -> mutable")
+        p[0] = p[1]
 
     def p_mutable(self, p):
         '''
@@ -603,8 +623,10 @@ class YEPCParser:
                 | mutable BK_OPEN expression BK_CLOSE
                 | mutable DOT ID
         '''
+        p[0] = YEPCEntity()
         if len(p) == 2:
-            # p[0].place = new_temp()
+            p[0].place = p[1]
+            p[0].type = self.symtables[-1].symbols[p[1]]
             print("Rule 93: mutable -> ID")
         elif len(p) == 5:
             print("Rule 94: mutable -> mutable[expression]")
@@ -628,6 +650,7 @@ class YEPCParser:
         immutable : constant
         '''
         print("Rule 98: immutable -> constant")
+        p[0] = p[1]
 
     def p_call(self, p):
         '''
@@ -662,12 +685,18 @@ class YEPCParser:
         constant : NUMCONST
         '''
         print("Rule 104: constant -> NUMCONST")
+        p[0] = YEPCEntity()
+        p[0].place = p[1]
+        p[0].type = 'int'
 
     def p_constant_2(self, p):
         '''
         constant : REALCONST
         '''
         print("Rule 105: constant -> REALCONST")
+        p[0] = YEPCEntity()
+        p[0].place = p[1]
+        p[0].type = 'real'
 
     def p_constant_3(self, p):
         '''
