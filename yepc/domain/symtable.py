@@ -8,7 +8,7 @@
 # =======================================
 
 
-class SymbolTable():
+class SymbolTable:
     '''
     Provides symbol table in our front end compiler
 
@@ -34,7 +34,7 @@ class SymbolTable():
         self.symbols[temp_id] = temp_type
         return temp_id
 
-    def insert_variable(self, var_id, var_type):
+    def insert_variable(self, var_id, var_type: str):
         self.symbols[var_id] = var_type
 
     def insert_procedure(self, proc_id, proc_table):
