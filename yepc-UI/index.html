@@ -70,6 +70,21 @@
         </tr>
         </tbody>
       </table>
+      <table v-for="(table, name) in symtables" class="table">
+        <thead>
+          <caption>{{ name }}</caption>
+          <tr>
+            <td>ID</td>
+            <td>Type</td>
+          </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(type, id) in table">
+          <td>{{ id }}</td>
+          <td>{{ type }}</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

@@ -19,28 +19,31 @@ var lexer = new Vue({
   },
   methods: {
     tokenize: function () {
-      var form = $("#source").serialize()
+      var form = $("#source").serialize();
       $.post('lex', form, function (data, status) {
-        lexer.tokens = JSON.parse(data)
-      })
+        lexer.tokens = JSON.parse(data);
+      });
     }
   }
-})
+});
 
 var parser = new Vue({
   el: '#parser',
   data: {
-    quadruples: []
+    quadruples: [],
+    symtables: {}
   },
   methods: {
     parse: function () {
-      var form = $("#source").serialize()
+      var form = $("#source").serialize();
       $.post('yacc', form, function (data, status) {
-        parser.quadruples = JSON.parse(data)
-      })
+        var json_data = JSON.parse(data);
+        parser.quadruples = json_data.quadruples;
+        parser.symtables = json_data.symtables;
+      });
     }
   }
-})
+});
 
 new Vue({
   el: '#source',
@@ -57,7 +60,7 @@ new Vue({
       }
     }
   }
-})
+});
 
 $('document').ready(function () {
-})
+});
