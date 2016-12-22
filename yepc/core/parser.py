@@ -189,25 +189,18 @@ class YEPCParser:
         print("Rule 23: returnTypeSpecifier -> CHAR_T")
         p[0] = 'char'
 
-    def p_fun_declaration(self, p):
+    def p_fun_declaration_1(self, p):
         '''
-        funDeclaration : funRetDeclaration
+        funDeclaration :  typeSpecifier ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
-        #fun initiator vardashte shode
-        print("Rule 24*: funDeclaration -> funInitiator funRetDeclaration")
+        print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
-    def p_fun_ret_delaration_1(self, p):
+    def p_fun_declaration_2(self, p):
         '''
-        funRetDeclaration : typeSpecifier ID PR_OPEN params PR_CLOSE statement
+        funRetDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
-        print("Rule 24: funDeclaration ->",
-              "typeSpecifier ID (params) statement")
+        print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
-    def p_fun_ret_declaration_2(self, p):
-        '''
-        funRetDeclaration : ID PR_OPEN params PR_CLOSE statement
-        '''
-        print("Rule 25: funDeclaration -> ID (params) statement")
 
     def p_fun_initiator(self, p):
         '''
