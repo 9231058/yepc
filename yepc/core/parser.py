@@ -191,14 +191,23 @@ class YEPCParser:
 
     def p_fun_declaration(self, p):
         '''
-        funDeclaration : typeSpecifier funInitiator ID PR_OPEN params PR_CLOSE statement
-                       | funInitiator ID PR_OPEN params PR_CLOSE statement
+        funDeclaration : funRetDeclaration
         '''
-        if len(p) == 7:
-            print("Rule 24 funDeclaration ->",
-                  "typeSpecifier ID (params) statement")
-        else:
-            print("Rule 25: funDeclaration -> ID (params) statement")
+        #fun initiator vardashte shode
+        print("Rule 24*: funDeclaration -> funInitiator funRetDeclaration")
+
+    def p_fun_ret_delaration_1(self, p):
+        '''
+        funRetDeclaration : typeSpecifier ID PR_OPEN params PR_CLOSE statement
+        '''
+        print("Rule 24: funDeclaration ->",
+              "typeSpecifier ID (params) statement")
+
+    def p_fun_ret_declaration_2(self, p):
+        '''
+        funRetDeclaration : ID PR_OPEN params PR_CLOSE statement
+        '''
+        print("Rule 25: funDeclaration -> ID (params) statement")
 
     def p_fun_initiator(self, p):
         '''
@@ -491,7 +500,7 @@ class YEPCParser:
 
     def p_quadder(self, p):
         '''
-        orInitiator : empty
+        quadder : empty
         '''
         p[0].quad = len(self.quadruples)
         print("Rule Quadder: quadder -> quadder -> empty")
