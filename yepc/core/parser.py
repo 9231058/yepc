@@ -448,7 +448,6 @@ class YEPCParser:
         print("Rule 67: simpleExpression ->",
               "simpleExpression OR_KW simpleExpression")
 
-
     def p_simple_expression_2(self, p):
         '''
         simpleExpression : simpleExpression AND_KW quadder simpleExpression
@@ -461,7 +460,7 @@ class YEPCParser:
         simpleExpression : simpleExpression OR_KW ELSE_KW quadder simpleExpression %prec ORELSE
         '''
         backpatch(p[1].false_list, p[4].quad)
-        p[0].true_list = merge(p[1].true_list,p[5].true_list)
+        p[0].true_list = merge(p[1].true_list, p[5].true_list)
         p[0].false_list = p[5].false_list
         print("Rule 69: simpleExpression ->",
               "simpleExpression OR_KW ELSE_KW simpleExpression")
