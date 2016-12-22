@@ -437,29 +437,36 @@ class YEPCParser:
 
     def p_simple_expression_1(self, p):
         '''
-        simpleExpression : simpleExpression OR_KW simpleExpression
+        simpleExpression : simpleExpression OR_KW quadder simpleExpression
         '''
         print("Rule 67: simpleExpression ->",
               "simpleExpression OR_KW simpleExpression")
 
+
     def p_simple_expression_2(self, p):
         '''
-        simpleExpression : simpleExpression AND_KW simpleExpression
+        simpleExpression : simpleExpression AND_KW quadder simpleExpression
         '''
         print("Rule 68: simpleExpression ->",
               "simpleExpression AND_KW simpleExpression")
 
     def p_simple_expression_3(self, p):
         '''
-        simpleExpression : simpleExpression OR_KW ELSE_KW simpleExpression %prec ORELSE
+        simpleExpression : simpleExpression OR_KW ELSE_KW quadder simpleExpression %prec ORELSE
         '''
+        backpatch(p[1].false_list, p[4].quad)
+        p[0].true_list = merge(p[1].true_list,p[5].true_list)
+        p[0].false_list = p[5].false_list
         print("Rule 69: simpleExpression ->",
               "simpleExpression OR_KW ELSE_KW simpleExpression")
 
     def p_simple_expression_4(self, p):
         '''
-        simpleExpression : simpleExpression AND_KW THEN_KW simpleExpression %prec ANDTHEN
+        simpleExpression : simpleExpression AND_KW THEN_KW quadder simpleExpression %prec ANDTHEN
         '''
+        backpatch(p[1].true_list, p[4].quad)
+        p[0].true_list = merge(p[1].false_list,p[5].false_list)
+        p[0].true_list = p[5].true_list
         print("Rule 70: simpleExpression ->",
               "simpleExpression AND_KW THEN_KW simpleExpression")
 
@@ -467,6 +474,8 @@ class YEPCParser:
         '''
         simpleExpression : NOT_KW simpleExpression
         '''
+        p[0].true_list = p[2].false_list
+        p[0].false_list = p[2].true_list
         print("Rule 71: simpleExpression -> NOT_KW simpleExpression")
 
     def p_simple_expression_6(self, p):
@@ -474,6 +483,13 @@ class YEPCParser:
         simpleExpression : relExpression
         '''
         print("Rule 72: simpleExpression -> relExpression")
+
+    def p_quadder(self, p):
+        '''
+        orInitiator : empty
+        '''
+        p[0].quad = len(self.quadruples)
+        print("Rule Quadder: quadder -> quadder -> empty")
 
     def p_rel_expression(self, p):
         '''
