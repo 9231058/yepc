@@ -94,6 +94,7 @@ def yacc_handler():
                 result[tk] = tv
             elif isinstance(tv, SymbolTable):
                 symtables[tk] = tv
+                result[tk] = "function"
         results['symtables'][name] = result
 
     return json.dumps(results)
