@@ -199,7 +199,7 @@ class YEPCParser:
 
     def p_fun_declaration_2(self, p):
         '''
-        funRetDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
+        funDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(p[1], s)
