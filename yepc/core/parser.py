@@ -201,12 +201,12 @@ class YEPCParser:
         '''
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
-
     def p_fun_initiator(self, p):
         '''
         funInitiator : empty
         '''
-        pass
+        self.symtables.append(SymbolTable(self.symtables[-1]))
+        self.offsets.append(0)
 
     def p_params_1(self, p):
         '''
@@ -234,6 +234,8 @@ class YEPCParser:
         '''
         paramTypeList : typeSpecifier paramIdList
         '''
+        for name in p[2]:
+            self.symtables[-1].insert_variable(name, p[1])
         print("Rule 30: paramTypeList -> typeSpecifier paramIdList")
 
     def p_param_id_list(self, p):
@@ -242,8 +244,10 @@ class YEPCParser:
                     | paramId
         '''
         if len(p) == 4:
+            p[0] = [*p[1], p[3]]
             print("Rule 31: paramIdList -> paramIdList , paramId")
         else:
+            p[0] = [p[1]]
             print("Rule 32: paramIdList -> paramId")
 
     def p_param_id(self, p):
@@ -252,8 +256,10 @@ class YEPCParser:
                 | ID
         '''
         if len(p) == 4:
+            p[0] = '%s[]' % p[1]
             print("Rule 33: paramId -> ID [ ]")
         else:
+            p[0] = p[1]
             print("Rule 34: paramId -> ID")
 
     def p_statement_1(self, p):
