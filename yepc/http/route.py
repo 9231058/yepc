@@ -12,9 +12,9 @@ import json
 from . import app
 from ..core.lex import YEPCLexer
 from ..core.parser import YEPCParser
+from ..domain.symtable import SymbolTable
 
 lexer = YEPCLexer()
-parser = YEPCParser()
 
 
 # About
@@ -57,17 +57,43 @@ def lex_handler():
 
     return json.dumps(result)
 
-# YACC Phase
 
+# Parse + Interintermediate Code Generation Phase
 
 @app.route('/yacc', methods=['POST'])
 def yacc_handler():
     data = flask.request.form['text']
-    result = []
+    results = {
+        'quadruples': [],
+        'symtables': {}
+    }
+
+    parser = YEPCParser()
 
     l = lexer.build()
     p = parser.build()
 
     p.parse(data, lexer=l, debug=False)
 
-    return json.dumps(result)
+    for q in parser.quadruples:
+        result = {}
+        result['result'] = q.result
+        result['op'] = q.op
+        result['arg_one'] = q.arg_one
+        result['arg_two'] = q.arg_two
+        results['quadruples'].append(result)
+
+    symtables = {}
+    symtables['root'] = parser.symtables[0]
+
+    while bool(symtables):
+        name, table = symtables.popitem()
+        result = {}
+        for (tk, tv) in table.symbols.items():
+            if isinstance(tv, str):
+                result[tk] = tv
+            elif isinstance(tv, SymbolTable):
+                symtables[tk] = tv
+        results['symtables'][name] = result
+
+    return json.dumps(results)
