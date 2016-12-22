@@ -193,12 +193,16 @@ class YEPCParser:
         '''
         funDeclaration :  typeSpecifier ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
+        s = self.symtables.pop()
+        self.symtables[-1].insert_procedure(p[2], s)
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_declaration_2(self, p):
         '''
         funRetDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
+        s = self.symtables.pop()
+        self.symtables[-1].insert_procedure(p[1], s)
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
     def p_fun_initiator(self, p):
