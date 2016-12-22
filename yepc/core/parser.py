@@ -197,7 +197,7 @@ class YEPCParser:
 
     def p_fun_declaration_2(self, p):
         '''
-        funRetDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
+        funDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
         '''
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
