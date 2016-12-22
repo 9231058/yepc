@@ -191,14 +191,20 @@ class YEPCParser:
 
     def p_fun_declaration(self, p):
         '''
-        funDeclaration : typeSpecifier ID PR_OPEN params PR_CLOSE statement
-                       | ID PR_OPEN params PR_CLOSE statement
+        funDeclaration : typeSpecifier funInitiator ID PR_OPEN params PR_CLOSE statement
+                       | funInitiator ID PR_OPEN params PR_CLOSE statement
         '''
         if len(p) == 7:
             print("Rule 24 funDeclaration ->",
                   "typeSpecifier ID (params) statement")
         else:
             print("Rule 25: funDeclaration -> ID (params) statement")
+
+    def p_fun_initiator(self, p):
+        '''
+        funInitiator : empty
+        '''
+        pass
 
     def p_params_1(self, p):
         '''
@@ -637,6 +643,9 @@ class YEPCParser:
         '''
         immutable : PR_OPEN expression PR_CLOSE
         '''
+        p[0] = YEPCEntity()
+        p[0].place = p[2].place
+        p[0].type = p[2].type
         print("Rule 96: immutable -> (expression)")
 
     def p_immutable_2(self, p):
