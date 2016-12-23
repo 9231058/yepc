@@ -40,7 +40,6 @@ var parser = new Vue({
         var json_data = JSON.parse(data);
         parser.quadruples = json_data.quadruples;
         parser.symtables = json_data.symtables;
-        console.log(json_data)
       });
 
     }
