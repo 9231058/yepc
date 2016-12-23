@@ -87,7 +87,7 @@ class YEPCParser:
         '''
         for (name, value) in p[2]:
             self.symtables[-1].insert_variable(name, p[1])
-            self.quadruples.append(QuadRuple(op='=', arg1=value, result=name))
+            self.quadruples.append(QuadRuple(op='', arg1=value, arg2='', result=name))
         print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
 
     def p_scoped_var_declaration(self, p):
@@ -96,7 +96,7 @@ class YEPCParser:
         '''
         for (name, value) in p[2]:
             self.symtables[-1].insert_variable(name, p[1])
-            self.quadruples.append(QuadRuple(op='=', arg1=value, result=name))
+            self.quadruples.append(QuadRuple(op='', arg1=value, arg2='', result=name))
         print("Rule 9: scopedVarDeclaration ->",
               "scopedTypeSpecifier varDeclarationList;")
 
