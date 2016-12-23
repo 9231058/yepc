@@ -409,36 +409,58 @@ class YEPCParser:
         '''
         expression : mutable EXP expression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='', arg1=p[3].place, arg2='',
+                                         result=p[1].place))
         print("Rule 59: expression -> mutable EXP expression")
 
     def p_expression_2(self, p):
         '''
         expression : mutable PLUSEXP expression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
         print("Rule 60: expression -> mutable PLUSEXP expression")
 
     def p_expression_3(self, p):
         '''
         expression : mutable MINUSEXP expression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
         print("Rule 61: expression -> mutable MINUSEXP expression")
 
     def p_expression_4(self, p):
         '''
         expression : mutable MULTEXP expression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
         print("Rule 62: expression -> mutable MULTEXP expression")
 
     def p_expression_5(self, p):
         '''
         expression : mutable DIVEXP expression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
         print("Rule 63: expression -> mutable DIVEXP expression")
 
     def p_expression_6(self, p):
         '''
         expression : simpleExpression
         '''
+        p[0] = p[1]
         print("Rule 64: expression -> simpleExpression")
 
     def p_expression_7(self, p):
@@ -499,6 +521,7 @@ class YEPCParser:
         '''
         simpleExpression : relExpression
         '''
+        p[0] = p[1]
         print("Rule 72: simpleExpression -> relExpression")
 
     def p_quadder(self, p):
@@ -517,6 +540,7 @@ class YEPCParser:
             print("Rule 73: relExpression ->",
                   "mathlogicExpression relop mathlogicExpression")
         else:
+            p[0] = p[1]
             print("Rule 74: relExpression -> mathlogicExpression")
 
     def p_relop_1(self, p):
@@ -559,6 +583,11 @@ class YEPCParser:
         '''
         mathlogicExpression : mathlogicExpression PLUS mathlogicExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp(p[1].type)
+        p[0].type = p[1].type
+        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2=p[3].place,
+                                         result=p[0].place))
         print("Rule 81: mathlogicExpression ->",
               "mathlogicExpression PLUS mathlogicExpression")
 
@@ -566,6 +595,11 @@ class YEPCParser:
         '''
         mathlogicExpression : mathlogicExpression MINUS mathlogicExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp(p[1].type)
+        p[0].type = p[1].type
+        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[3].place,
+                                         result=p[0].place))
         print("Rule 82: mathlogicExpression ->",
               "mathlogicExpression MINUS mathlogicExpression")
 
@@ -573,6 +607,11 @@ class YEPCParser:
         '''
         mathlogicExpression : mathlogicExpression MULT mathlogicExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp(p[1].type)
+        p[0].type = p[1].type
+        self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[3].place,
+                                         result=p[0].place))
         print("Rule 83: mathlogicExpression ->",
               "mathlogicExpression MULT mathlogicExpression")
 
@@ -580,6 +619,11 @@ class YEPCParser:
         '''
         mathlogicExpression : mathlogicExpression REM mathlogicExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp(p[1].type)
+        p[0].type = p[1].type
+        self.quadruples.append(QuadRuple(op='%', arg1=p[1].place, arg2=p[3].place,
+                                         result=p[0].place))
         print("Rule 84: mathlogicExpression ->",
               "mathlogicExpression REM mathlogicExpression")
 
@@ -587,6 +631,11 @@ class YEPCParser:
         '''
         mathlogicExpression : mathlogicExpression DIV mathlogicExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp(p[1].type)
+        p[0].type = p[1].type
+        self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[3].place,
+                                         result=p[0].place))
         print("Rule 85: mathlogicExpression ->",
               "mathlogicExpression DIV mathlogicExpression")
 
@@ -594,6 +643,7 @@ class YEPCParser:
         '''
         mathlogicExpression : unaryExpression
         '''
+        p[0] = p[1]
         print("Rule 86: mathlogicExpression -> unaryExpression")
 
     def p_unary_expression_1(self, p):
