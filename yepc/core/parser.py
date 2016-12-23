@@ -85,18 +85,20 @@ class YEPCParser:
         '''
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
         '''
-        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
         for (name, value) in p[2]:
             self.symtables[-1].insert_variable(name, p[1])
+            self.quadruples.append(QuadRuple(op='=', arg1=value, result=name))
+        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
 
     def p_scoped_var_declaration(self, p):
         '''
         scopedVarDeclaration : scopedTypeSpecifier varDeclarationList SEMICOLON
         '''
-        print("Rule 9: scopedVarDeclaration ->",
-              "scopedTypeSpecifier varDeclarationList;")
         for (name, value) in p[2]:
             self.symtables[-1].insert_variable(name, p[1])
+            self.quadruples.append(QuadRuple(op='=', arg1=value, result=name))
+        print("Rule 9: scopedVarDeclaration ->",
+              "scopedTypeSpecifier varDeclarationList;")
 
     def p_var_declaration_list(self, p):
         '''
@@ -118,11 +120,11 @@ class YEPCParser:
         '''
         if len(p) == 2:
             print("Rule 12: varDeclarationInitialize -> varDeclarationId")
-            p[0] = (p[1], 0)
+            p[0] = (p[1], '0')
         else:
             print("Rule 13: varDeclarationInitialize ->",
                   "varDeclarationId: simpleExpression")
-            p[0] = (p[1], p[3])
+            p[0] = (p[1], p[3].place)
 
     def p_var_declaration_id(self, p):
         '''
