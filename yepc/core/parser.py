@@ -600,18 +600,17 @@ class YEPCParser:
         '''
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
-        print("Rule 87: unraryExpression -> MINUS unaryExpression")
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[2].type)
         p[0].type = p[2].type
         self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
                                          result=p[0].place))
+        print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
     def p_unary_expression_2(self, p):
         '''
         unaryExpression : RANDOM unaryExpression
         '''
-        print("Rule 88: unaryExpression -> RANDOM unaryExpression")
         t = YEPCEntity()
         p[0] = YEPCEntity()
         t.place = self.symtables[-1].new_temp('int')
@@ -622,33 +621,38 @@ class YEPCParser:
         p[0].type = "int"
         self.quadruples.append(QuadRuple(op='%', arg1=t.place, arg2=p[2].place,
                                          result=p[0].place))
+        print("Rule 88: unaryExpression -> RANDOM unaryExpression")
 
     def p_unary_expression_3(self, p):
         '''
         unaryExpression : MULT unaryExpression %prec UMULT
         '''
+        p[0] = YEPCEntity()
+        p[0].place = self.symtables[-1].new_temp('int')
+        p[0].type = "int"
+        self.quadruples.append(QuadRuple(op='sizeof', arg1=p[2].place, arg2='', result=p[0].place))
         print("Rule 89: unaryExpression -> MULT unaryExpression")
 
     def p_unary_expression_4(self, p):
         '''
         unaryExpression : factor
         '''
-        print("Rule 90: unaryExpression -> factor")
         p[0] = p[1]
+        print("Rule 90: unaryExpression -> factor")
 
     def p_factor_1(self, p):
         '''
         factor : immutable
         '''
-        print("Rule 91: factor -> immutable")
         p[0] = p[1]
+        print("Rule 91: factor -> immutable")
 
     def p_factor_2(self, p):
         '''
         factor : mutable
         '''
-        print("Rule 92: factor -> mutable")
         p[0] = p[1]
+        print("Rule 92: factor -> mutable")
 
     def p_mutable(self, p):
         '''
@@ -685,8 +689,8 @@ class YEPCParser:
         '''
         immutable : constant
         '''
-        print("Rule 98: immutable -> constant")
         p[0] = p[1]
+        print("Rule 98: immutable -> constant")
 
     def p_call(self, p):
         '''
@@ -720,24 +724,27 @@ class YEPCParser:
         '''
         constant : NUMCONST
         '''
-        print("Rule 104: constant -> NUMCONST")
         p[0] = YEPCEntity()
         p[0].place = p[1]
         p[0].type = 'int'
+        print("Rule 104: constant -> NUMCONST")
 
     def p_constant_2(self, p):
         '''
         constant : REALCONST
         '''
-        print("Rule 105: constant -> REALCONST")
         p[0] = YEPCEntity()
         p[0].place = p[1]
         p[0].type = 'real'
+        print("Rule 105: constant -> REALCONST")
 
     def p_constant_3(self, p):
         '''
         constant : CHARCONST
         '''
+        p[0] = YEPCEntity()
+        p[0].place = p[1]
+        p[0].type = 'char'
         print("Rule 106: constant -> CHARCONST")
 
     def p_constant_4(self, p):
