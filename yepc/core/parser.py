@@ -539,6 +539,17 @@ class YEPCParser:
                       | mathlogicExpression
         '''
         if len(p) == 4:
+            p[0] = YEPCEntity()
+            p[0].type = 'bool'
+            self.quadruples.append(QuadRuple(op='if', result='',
+                                             arg1='%s %s %s' % (p[1].place, p[2], p[3].place),
+                                             arg2=''))
+            qt = QuadRuple(op='goto', result='', arg1='-', arg2='')
+            qf = QuadRuple(op='goto', result='', arg1='-', arg2='')
+            p[0].true_list.append(qt)
+            p[0].false_list.append(qf)
+            self.quadruples.append(qt)
+            self.quadruples.append(qf)
             print("Rule 73: relExpression ->",
                   "mathlogicExpression relop mathlogicExpression")
         else:
@@ -549,36 +560,42 @@ class YEPCParser:
         '''
         relop : LE
         '''
+        p[0] = '<='
         print("Rule 75: relop -> LE")
 
     def p_relop_2(self, p):
         '''
         relop : LT
         '''
+        p[0] = '<'
         print("Rule 76: relop -> LT")
 
     def p_relop_3(self, p):
         '''
         relop : GT
         '''
+        p[0] = '>'
         print("Rule 77: relop -> GT")
 
     def p_relop_4(self, p):
         '''
         relop : GE
         '''
+        p[0] = '>='
         print("Rule 78: relop -> GE")
 
     def p_relop_5(self, p):
         '''
         relop : EQ
         '''
+        p[0] = '=='
         print("Rule 79: relop -> EQ")
 
     def p_relop_6(self, p):
         '''
         relop : NE
         '''
+        p[0] = '!='
         print("Rule 80: relop -> NE")
 
     def p_mathlogic_expression_1(self, p):
@@ -803,12 +820,22 @@ class YEPCParser:
         '''
         constant : TRUE
         '''
+        p[0] = YEPCEntity()
+        p[0].type = 'bool'
+        q = QuadRuple(result='', op='goto', arg1='-', arg2='')
+        p[0].true_list.append(q)
+        self.quadruples.append(q)
         print("Rule 107: constant -> TRUE")
 
     def p_constant_5(self, p):
         '''
         constant : FALSE
         '''
+        p[0] = YEPCEntity()
+        p[0].type = 'bool'
+        q = QuadRuple(result='', op='goto', arg1='-', arg2='')
+        p[0].false_list.append(q)
+        self.quadruples.append(q)
         print("Rule 108: constant -> FALSE")
 
     # Error rule for syntax errors
