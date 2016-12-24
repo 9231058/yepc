@@ -6,3 +6,8 @@ class YEPCEntity:
         self.type = None
         self.place = None
         self.quad = 0
+
+    @staticmethod
+    def backpatch(quad_list, target):
+        for quad in quad_list:
+            quad.arg_one = target
