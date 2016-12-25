@@ -644,7 +644,7 @@ class YEPCParser:
                                                  result=p[0].place))
             else:
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='+', arg1='1', arg2=p[1].place, result=p[0].place)
+                q1 = QuadRuple(op='+', arg1=p[1].place, arg2='1', result=p[0].place)
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
                 q3 = QuadRuple(op='=', arg1=p[1].place, arg2='', result=p[0].place)
                 self.quadruples.append(q1)
@@ -657,49 +657,205 @@ class YEPCParser:
 
     def p_mathlogic_expression_2(self, p):
         '''
-        mathlogicExpression : mathlogicExpression MINUS mathlogicExpression
+        mathlogicExpression : mathlogicExpression MINUS quadder mathlogicExpression
         '''
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[1].type)
-        p[0].type = p[1].type
-        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[3].place,
-                                         result=p[0].place))
+        if p[1].type == 'bool':
+            if p[4].type != 'bool':
+                p[0].type = p[4].type
+                q1 = QuadRuple(op='-', arg1='1', arg2=p[4].place, result=p[0].place)
+                q2 = QuadRuple(op='goto',arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1=p[4].place, arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+            else:
+                p[0].type = 'int'
+                q1 = QuadRuple(op='=',arg1='1', arg2='', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q5 = QuadRuple(op='-', arg1=p[0].place, arg2='1', result=p[0].place)
+
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+                self.quadruples.append(q4)
+                self.quadruples.append(q5)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        else:
+            if p[4].type != 'bool':
+                self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[4].place,
+                                                 result=p[0].place))
+            else:
+                p[0].type = p[1].type
+                q1 = QuadRuple(op='-', arg1=p[1].place, arg2='1', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1=p[1].place, arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples) - 1)
         print("Rule 82: mathlogicExpression ->",
               "mathlogicExpression MINUS mathlogicExpression")
 
     def p_mathlogic_expression_3(self, p):
         '''
-        mathlogicExpression : mathlogicExpression MULT mathlogicExpression
+        mathlogicExpression : mathlogicExpression MULT quadder mathlogicExpression
         '''
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[1].type)
-        p[0].type = p[1].type
-        self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[3].place,
-                                         result=p[0].place))
+        if p[1].type == 'bool':
+            if p[4].type != 'bool':
+                p[0].type = p[4].type
+                q1 = QuadRuple(op='*', arg1='1', arg2=p[4].place, result=p[0].place)
+                q2 = QuadRuple(op='goto',arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+            else:
+                p[0].type = 'int'
+                q1 = QuadRuple(op='=',arg1='1', arg2='', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q5 = QuadRuple(op='*', arg1=p[0].place, arg2='1', result=p[0].place)
+
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+                self.quadruples.append(q4)
+                self.quadruples.append(q5)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        else:
+            if p[4].type != 'bool':
+                self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[4].place,
+                                                 result=p[0].place))
+            else:
+                p[0].type = p[1].type
+                q1 = QuadRuple(op='*', arg1=p[1].place, arg2='1', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples) - 1)
         print("Rule 83: mathlogicExpression ->",
               "mathlogicExpression MULT mathlogicExpression")
 
     def p_mathlogic_expression_4(self, p):
         '''
-        mathlogicExpression : mathlogicExpression REM mathlogicExpression
+        mathlogicExpression : mathlogicExpression REM quadder mathlogicExpression
         '''
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[1].type)
-        p[0].type = p[1].type
-        self.quadruples.append(QuadRuple(op='%', arg1=p[1].place, arg2=p[3].place,
-                                         result=p[0].place))
+        if p[1].type == 'bool':
+            if p[4].type != 'bool':
+                p[0].type = p[4].type
+                q1 = QuadRuple(op='%', arg1='1', arg2=p[4].place, result=p[0].place)
+                q2 = QuadRuple(op='goto',arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+            else:
+                p[0].type = 'int'
+                q1 = QuadRuple(op='=',arg1='1', arg2='', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q5 = QuadRuple(op='%', arg1=p[0].place, arg2='1', result=p[0].place)
+
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+                self.quadruples.append(q4)
+                self.quadruples.append(q5)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        else:
+            if p[4].type != 'bool':
+                self.quadruples.append(QuadRuple(op='%', arg1=p[1].place, arg2=p[4].place,
+                                                 result=p[0].place))
+            else:
+                p[0].type = p[1].type
+                q1 = QuadRuple(op='%', arg1=p[1].place, arg2='1', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='%', arg1=p[1].place, arg2='0', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples) - 1)
         print("Rule 84: mathlogicExpression ->",
               "mathlogicExpression REM mathlogicExpression")
 
     def p_mathlogic_expression_5(self, p):
         '''
-        mathlogicExpression : mathlogicExpression DIV mathlogicExpression
+        mathlogicExpression : mathlogicExpression DIV quadder mathlogicExpression
         '''
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[1].type)
-        p[0].type = p[1].type
-        self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[3].place,
-                                         result=p[0].place))
+        if p[1].type == 'bool':
+            if p[4].type != 'bool':
+                p[0].type = p[4].type
+                q1 = QuadRuple(op='/', arg1='1', arg2=p[4].place, result=p[0].place)
+                q2 = QuadRuple(op='goto',arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+            else:
+                p[0].type = 'int'
+                q1 = QuadRuple(op='=',arg1='1', arg2='', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q5 = QuadRuple(op='/', arg1=p[0].place, arg2='1', result=p[0].place)
+
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+                self.quadruples.append(q4)
+                self.quadruples.append(q5)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        else:
+            if p[4].type != 'bool':
+                self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[4].place,
+                                                 result=p[0].place))
+            else:
+                p[0].type = p[1].type
+                q1 = QuadRuple(op='/', arg1=p[1].place, arg2='1', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='/', arg1=p[1].place, arg2='0', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples) - 1)
         print("Rule 85: mathlogicExpression ->",
               "mathlogicExpression DIV mathlogicExpression")
 
