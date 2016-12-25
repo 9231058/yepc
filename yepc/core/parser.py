@@ -496,6 +496,7 @@ class YEPCParser:
         simpleExpression : simpleExpression OR_KW ELSE_KW quadder simpleExpression %prec ORELSE
         '''
         p[0] = YEPCEntity()
+        p[0].type = 'bool'
         YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         p[0].true_list = p[1].true_list + p[5].true_list
         p[0].false_list = p[5].false_list
@@ -507,8 +508,9 @@ class YEPCParser:
         simpleExpression : simpleExpression AND_KW THEN_KW quadder simpleExpression %prec ANDTHEN
         '''
         p[0] = YEPCEntity()
+        p[0].type = 'bool'
         YEPCEntity.backpatch(p[1].true_list, p[4].quad)
-        p[0].true_list = p[1].false_list + p[5].false_list
+        p[0].false_list = p[1].false_list + p[5].false_list
         p[0].true_list = p[5].true_list
         print("Rule 70: simpleExpression ->",
               "simpleExpression AND_KW THEN_KW simpleExpression")
@@ -604,13 +606,52 @@ class YEPCParser:
 
     def p_mathlogic_expression_1(self, p):
         '''
-        mathlogicExpression : mathlogicExpression PLUS mathlogicExpression
+        mathlogicExpression : mathlogicExpression PLUS quadder mathlogicExpression
         '''
         p[0] = YEPCEntity()
         p[0].place = self.symtables[-1].new_temp(p[1].type)
-        p[0].type = p[1].type
-        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2=p[3].place,
-                                         result=p[0].place))
+        if p[1].type == 'bool':
+            if p[4].type != 'bool':
+                p[0].type = p[4].type
+                q1 = QuadRuple(op='+', arg1='1', arg2=p[4].place, result=p[0].place)
+                q2 = QuadRuple(op='goto',arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1=p[4].place, arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+            else:
+                p[0].type = 'int'
+                q1 = QuadRuple(op='=',arg1='1', arg2='', result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
+                q5 = QuadRuple(op='+', arg1=p[0].place, arg2='1', result=p[0].place)
+
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples) - 1)
+                self.quadruples.append(q4)
+                self.quadruples.append(q5)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        else:
+            if p[4].type != 'bool':
+                self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2=p[4].place,
+                                                 result=p[0].place))
+            else:
+                p[0].type = p[1].type
+                q1 = QuadRuple(op='+', arg1='1', arg2=p[1].place, result=p[0].place)
+                q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+                q3 = QuadRuple(op='=', arg1=p[1].place, arg2='', result=p[0].place)
+                self.quadruples.append(q1)
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
+                self.quadruples.append(q2)
+                self.quadruples.append(q3)
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples) - 1)
         print("Rule 81: mathlogicExpression ->",
               "mathlogicExpression PLUS mathlogicExpression")
 
@@ -747,9 +788,7 @@ class YEPCParser:
         '''
         immutable : PR_OPEN expression PR_CLOSE
         '''
-        p[0] = YEPCEntity()
-        p[0].place = p[2].place
-        p[0].type = p[2].type
+        p[0] = p[2]
         print("Rule 96: immutable -> (expression)")
 
     def p_immutable_2(self, p):
