@@ -886,10 +886,22 @@ class YEPCParser:
         unaryExpression : MINUS unaryExpression %prec UMINUS
         '''
         p[0] = YEPCEntity()
-        p[0].place = self.symtables[-1].new_temp(p[2].type)
-        p[0].type = p[2].type
-        self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
-                                         result=p[0].place))
+        if p[2].type == 'bool':
+            p[0].place = self.symtables[-1].new_temp('int')
+            p[0].type = 'int'
+            q1 = QuadRuple(op='-', arg1='0', arg2='1', result=p[0].place)
+            q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
+            q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+            self.quadruples.append(q1)
+            YEPCEntity.backpatch(p[2].true_list, len(self.quadruples) - 1)
+            self.quadruples.append(q2)
+            self.quadruples.append(q3)
+            YEPCEntity.backpatch(p[2].false_list, len(self.quadruples) - 1)
+        else:
+            p[0].place = self.symtables[-1].new_temp(p[2].type)
+            p[0].type = p[2].type
+            self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
+                                             result=p[0].place))
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
     def p_unary_expression_2(self, p):
