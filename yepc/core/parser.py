@@ -477,12 +477,20 @@ class YEPCParser:
         '''
         expression : mutable PLUSPLUS
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2='1', result=p[1].place))
         print("Rule 65: expression -> mutable PLUSPLUS")
 
     def p_expression_8(self, p):
         '''
         expression : mutable MINUSMINUS
         '''
+        p[0] = YEPCEntity()
+        p[0].type = p[1].type
+        p[0].place = p[1].place
+        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2='1', result=p[1].place))
         print("Rule 66: expression -> mutable MINUSMINUS")
 
     def p_simple_expression_1(self, p):
