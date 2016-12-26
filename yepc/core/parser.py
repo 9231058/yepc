@@ -344,15 +344,18 @@ class YEPCParser:
 
     def p_selection_stmt_1(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement %prec IFTHEN
+        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement %prec IFTHEN
         '''
+        YEPCEntity.backpatch(p[3].true_list, p[5].quad)
         print("Rule 48: selectionStmt ->",
               "IF_KW (simpleExpression) statement")
 
     def p_selection_stmt_2(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE statement ELSE_KW statement
+        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement ELSE_KW quadder statement
         '''
+        YEPCEntity.backpatch(p[3].true_list, p[5].quad)
+        YEPCEntity.backpatch(p[3].false_list, p[8].quad)
         print("Rule 49: selectionStmt ->",
               "IF_KW (simpleExpression) statement ELSE_KW statement")
 
