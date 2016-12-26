@@ -346,7 +346,8 @@ class YEPCParser:
         '''
         selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement %prec IFTHEN
         '''
-        YEPCEntity.backpatch(p[3].true_list, p[5].quad)
+        if (p[3].type == 'bool'):
+            YEPCEntity.backpatch(p[3].true_list, p[5].quad)
         print("Rule 48: selectionStmt ->",
               "IF_KW (simpleExpression) statement")
 
@@ -354,8 +355,9 @@ class YEPCParser:
         '''
         selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement ELSE_KW quadder statement
         '''
-        YEPCEntity.backpatch(p[3].true_list, p[5].quad)
-        YEPCEntity.backpatch(p[3].false_list, p[8].quad)
+        if (p[3].type == 'bool'):
+            YEPCEntity.backpatch(p[3].true_list, p[5].quad)
+            YEPCEntity.backpatch(p[3].false_list, p[8].quad)
         print("Rule 49: selectionStmt ->",
               "IF_KW (simpleExpression) statement ELSE_KW statement")
 
@@ -389,8 +391,11 @@ class YEPCParser:
 
     def p_iteration_stmt(self, p):
         '''
-        iterationStmt : WHILE_KW PR_OPEN simpleExpression PR_CLOSE statement
+        iterationStmt : WHILE_KW PR_OPEN quadder simpleExpression PR_CLOSE quadder statement nexter
         '''
+        YEPCEntity.backpatch(p[8].next_list, p[3].quad)
+        YEPCEntity.backpatch(p[4].true_list, p[6].quad)
+        YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
         print("Rule 55: iterationStmt ->",
               "WHILE_KW (simpleExpression) statement")
 
@@ -541,6 +546,15 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].quad = len(self.quadruples)
         print("Rule Quadder: quadder -> quadder -> empty")
+
+    def p_nexter(self, p):
+        '''
+        nexter : empty
+        '''
+        p[0] = YEPCEntity()
+        q = QuadRuple(op='goto', arg1='-', arg2='', result='')
+        p[0].next_list.append(q)
+        self.quadruples.append(q)
 
     def p_rel_expression(self, p):
         '''
