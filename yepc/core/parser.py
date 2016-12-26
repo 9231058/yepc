@@ -515,6 +515,26 @@ class YEPCParser:
         '''
         simpleExpression : simpleExpression AND_KW quadder simpleExpression
         '''
+        p[0] = YEPCEntity()
+        p[0].type = 'bool'
+        t1 = self.symtables[-1].new_temp('int')
+        YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
+        self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+        YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+        self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+
+        p[0].false_list = p[4].false_list
+        YEPCEntity.backpatch(p[4].true_list, len(self.quadruples))
+        self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % t1, arg2='', result=''))
+        qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+        p[0].false_list.append(qf)
+        self.quadruples.append(qf)
+        qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+        p[0].true_list.append(qt)
+        self.quadruples.append(qt)
+
         print("Rule 68: simpleExpression ->",
               "simpleExpression AND_KW simpleExpression")
 
