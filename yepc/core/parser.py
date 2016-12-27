@@ -195,20 +195,20 @@ class YEPCParser:
 
     def p_fun_declaration_1(self, p):
         '''
-        funDeclaration :  typeSpecifier ID funInitiator PR_OPEN params PR_CLOSE quadder nexter statement
+        funDeclaration :  typeSpecifier ID funInitiator nexter quadder PR_OPEN params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[2], s, p[7].quad)
-        YEPCEntity.backpatch(p[8].next_list, len(self.quadruples))
+        self.symtables[-1].insert_procedure(p[2], s, p[5].quad, p[7])
+        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_declaration_2(self, p):
         '''
-        funDeclaration : ID funInitiator PR_OPEN params PR_CLOSE quadder nexter statement
+        funDeclaration : ID funInitiator nexter quadder PR_OPEN params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[1], s, p[6].quad)
-        YEPCEntity.backpatch(p[7].next_list, len(self.quadruples))
+        self.symtables[-1].insert_procedure(p[1], s, p[4].quad, p[6])
+        YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
     def p_fun_initiator(self, p):
@@ -222,12 +222,16 @@ class YEPCParser:
         '''
         params : paramList
         '''
+        p[0] = p[1]
+        for (name, type) in p[0]:
+            self.quadruples.append(QuadRuple(op='pop', arg1='', arg2='', result=name))
         print("Rule 26: params -> paramList")
 
     def p_params_2(self, p):
         '''
         params : empty
         '''
+        p[0] = []
         print("Rule 27: params -> empty")
 
     def p_param_list(self, p):
@@ -236,16 +240,19 @@ class YEPCParser:
                   | paramTypeList
         '''
         if len(p) == 4:
+            p[0] = p[1] + p[3]
             print("Rule 28: paramList -> paramList; paramTypeList")
         else:
+            p[0] = p[1]
             print("Rule 29: paramList -> paramTypeList")
 
     def p_param_type_list(self, p):
         '''
         paramTypeList : typeSpecifier paramIdList
         '''
+        p[0] = []
         for name in p[2]:
-            self.symtables[-1].insert_variable(name, p[1])
+            p[0].append((name, p[1]))
         print("Rule 30: paramTypeList -> typeSpecifier paramIdList")
 
     def p_param_id_list(self, p):
