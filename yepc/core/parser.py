@@ -1209,6 +1209,8 @@ class YEPCParser:
                 line += str(result) + " = " + str(arg1) + " / " + str(arg2)+";"
             elif op == '%':
                 line += str(result) + " = " + str(arg1) + " % " + str(arg2)+";"
+            elif op == "" or op == "=":
+                line += str(result) + " = " + str(arg1)+";"
             #line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_file.write(line+"\n")
         c_file.write("}")
