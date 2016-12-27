@@ -12,6 +12,7 @@ import json
 from . import app
 from ..core.lex import YEPCLexer
 from ..core.parser import YEPCParser
+from ..core.to_c import YEPCToC
 from ..domain.symtable import SymbolTable
 
 lexer = YEPCLexer()
@@ -98,3 +99,19 @@ def yacc_handler():
         results['symtables'][name] = result
 
     return json.dumps(results)
+
+
+@app.route('/code', methods=['POST'])
+def code_handler():
+    data = flask.request.form['text']
+
+    parser = YEPCParser()
+
+    l = lexer.build()
+    p = parser.build()
+
+    p.parse(data, lexer=l, debug=False)
+
+    c_generator = YEPCToC(parser.quadruples)
+
+    return c_generator.to_c()
