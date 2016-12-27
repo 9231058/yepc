@@ -217,7 +217,6 @@ class YEPCParser:
         funInitiator : empty
         '''
         self.symtables.append(SymbolTable(self.symtables[-1]))
-        self.offsets.append(0)
 
     def p_params_1(self, p):
         '''
@@ -319,9 +318,18 @@ class YEPCParser:
 
     def p_compound_stmt(self, p):
         '''
-        compoundStmt : BR_OPEN localDeclarations statementList BR_CLOSE
+        compoundStmt : BR_OPEN scopeInitiator localDeclarations statementList BR_CLOSE
         '''
+        s = self.symtables.pop()
+        self.symtables[-1].insert_scope(s)
         print("Rule 41: compoundStmt -> {localDeclarations statementList}")
+
+    def p_scope_initiator(self, p):
+        '''
+        scopeInitiator : empty
+        '''
+        self.symtables.append(SymbolTable(self.symtables[-1]))
+        print("Rule *: scopeInitiator -> empty")
 
     def p_local_declarations(self, p):
         '''
@@ -1037,7 +1045,7 @@ class YEPCParser:
         p[0] = YEPCEntity()
         if len(p) == 2:
             p[0].place = p[1]
-            p[0].type = self.symtables[-1].symbols[p[1]]
+            p[0].type = self.symtables[-1].get_symbol(p[1])
             print("Rule 93: mutable -> ID")
         elif len(p) == 5:
             print("Rule 94: mutable -> mutable[expression]")
@@ -1100,10 +1108,10 @@ class YEPCParser:
                 | expression
         '''
         if len(p) == 4:
-            p[0] = p[1].append(p[3].place, self.symtables[-1].symbols[p[3].place])
+            p[0] = p[1].append(p[3].place, self.symtables[-1].get_symbol(p[3].place))
             print("Rule 102: argList -> argList, expression")
         else:
-            p[0] = [(p[1].place, self.symtables[-1].symbols[p[1].place])]
+            p[0] = [(p[1].place, self.symtables[-1].get_symbol(p[1].place))]
             print("Rule 103: argList -> expression")
 
     def p_constant_1(self, p):
