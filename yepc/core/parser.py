@@ -199,7 +199,7 @@ class YEPCParser:
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(p[2], s, p[5].quad, p[7])
-        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[8].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_declaration_2(self, p):
@@ -224,7 +224,7 @@ class YEPCParser:
         '''
         p[0] = p[1]
         for (name, type) in p[0]:
-            self.quadruples.append(QuadRuple(op='pop', arg1='', arg2='', result=name))
+            self.quadruples.append(QuadRuple(op='pop', arg1=type, arg2='', result=name))
         print("Rule 26: params -> paramList")
 
     def p_params_2(self, p):
