@@ -364,10 +364,11 @@ class YEPCParser:
 
     def p_selection_stmt_1(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement %prec IFTHEN
+        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement quadder %prec IFTHEN
         '''
         if (p[3].type == 'bool'):
             YEPCEntity.backpatch(p[3].true_list, p[5].quad)
+            YEPCEntity.backpatch(p[3].false_list, p[7].quad)
         print("Rule 48: selectionStmt ->",
               "IF_KW (simpleExpression) statement")
 
