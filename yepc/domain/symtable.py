@@ -22,6 +22,7 @@ class SymbolTable:
     def __init__(self, parent):
         self.symbols = {}
         self.header = {}
+        self.meta = {}
         self.parent = parent
         self.temp_id_generator = self.temp_id_generator()
 
@@ -39,8 +40,12 @@ class SymbolTable:
     def insert_variable(self, var_id, var_type: str):
         self.symbols[var_id] = var_type
 
-    def insert_procedure(self, proc_id, proc_table):
+    def insert_procedure(self, proc_id, proc_table, start=0, params=[]):
         self.symbols[proc_id] = proc_table
+        self.meta[proc_id] = {
+            'start': start,
+            'params': params
+        }
 
     def add_width(self, width):
         self.header[width] = width
