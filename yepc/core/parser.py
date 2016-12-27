@@ -41,7 +41,6 @@ class YEPCParser:
         'program : programInitiator declarationList'
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[-1].meta['#aa11']['start'], arg2='', result=''))
-        self.printInC()
         print("Rule 1: program -> declarationList")
 
     def p_program_initiator(self, p):
@@ -1180,40 +1179,3 @@ class YEPCParser:
         '''
         self.parser = yacc.yacc(module=self, **kwargs)
         return self.parser
-
-    def printInC(self):
-        c_file = open("output.c","w+")
-        c_file.write("#include <stdio.h>\n")
-        c_file.write("int main(){\n")
-        for i in range(len(self.quadruples)):
-            entry = self.quadruples[i]
-            label = self.makeLabel(i) + ":"
-            op = entry.op
-            arg1 = entry.arg_one
-            arg2 = entry.arg_two
-            result = entry.result
-            line = label + " "
-
-            if op == 'if':
-                line += "if (" + str(arg1) +")"
-            elif op == 'goto':
-                if arg1 != "-":
-                    line += "goto "+ self.makeLabel(arg1) +";"
-            elif op == '+':
-                line += str(result) + " = " + str(arg1) + " + " + str(arg2)+";"
-            elif op == '-':
-                line += str(result) + " = " + str(arg1) + " - " + str(arg2)+";"
-            elif op == '*':
-                line += str(result) + " = " + str(arg1) + " * " + str(arg2)+";"
-            elif op == '/':
-                line += str(result) + " = " + str(arg1) + " / " + str(arg2)+";"
-            elif op == '%':
-                line += str(result) + " = " + str(arg1) + " % " + str(arg2)+";"
-            #line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
-            c_file.write(line+"\n")
-        c_file.write("}")
-        c_file.close()
-        print("ouput.c generated")
-
-    def makeLabel(self,index):
-        return ("L"+str(index))
