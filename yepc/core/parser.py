@@ -13,6 +13,7 @@ from .lex import YEPCLexer
 from ..domain.qr import QuadRuple
 from ..domain.symtable import SymbolTable
 from ..domain.entity import YEPCEntity
+from .to_c import YEPCToC
 
 
 class YEPCParser:
@@ -42,6 +43,11 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[-1].meta['#aa11']['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
+        toC = YEPCToC(self.quadruples)
+        c_file = open("output.c", "w+")
+        c_file.write(toC.to_c())
+        c_file.close()
+
 
     def p_program_initiator(self, p):
         'programInitiator : empty'
