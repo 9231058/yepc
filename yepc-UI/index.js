@@ -1,7 +1,6 @@
 /*
  * +===============================================
  * | Author:        Parham Alvani (parham.alvani@gmail.com)
- * | Author:        Iman Tabrizian (tabrizian@outlook.com)
  * |
  * | Creation Date: 09-09-2016
  * |
@@ -45,6 +44,23 @@ var parser = new Vue({
     }
   }
 });
+
+var code = new Vue({
+  el: '#code',
+  data: {
+    c: ''
+  },
+  methods: {
+    toC: function () {
+      var form = $("#source").serialize();
+      $.post('code', form, function (data, status) {
+        code.c = data;
+      });
+
+    }
+  }
+});
+
 
 new Vue({
   el: '#source',
