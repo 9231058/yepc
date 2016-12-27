@@ -40,11 +40,13 @@ class SymbolTable:
     def insert_variable(self, var_id, var_type: str):
         self.symbols[var_id] = var_type
 
-    def insert_procedure(self, proc_id, proc_table, start=0, params=[]):
+    def insert_procedure(self, proc_id, proc_table,
+                         start=0, params=[], return_type='void'):
         self.symbols[proc_id] = proc_table
         self.meta[proc_id] = {
             'start': start,
-            'params': params
+            'params': params,
+            'return_type': return_type
         }
 
     def add_width(self, width):
