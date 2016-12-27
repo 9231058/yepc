@@ -198,7 +198,7 @@ class YEPCParser:
         funDeclaration :  typeSpecifier ID funInitiator nexter quadder PR_OPEN params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[2], s, p[5].quad, p[7])
+        self.symtables[-1].insert_procedure(p[2], s, p[5].quad, p[7], p[1])
         YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
@@ -207,7 +207,7 @@ class YEPCParser:
         funDeclaration : ID funInitiator nexter quadder PR_OPEN params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[1], s, p[4].quad, p[6])
+        self.symtables[-1].insert_procedure(p[1], s, p[4].quad, p[6], 'void')
         YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
@@ -1067,8 +1067,16 @@ class YEPCParser:
         '''
         call : ID PR_OPEN args PR_CLOSE
         '''
+        p[0] = YEPCEntity()
+        p[0].type = self.symtables[-1].meta[p[1]]['return_type']
+        p[0].place = self.symtables[-1].new_temp(p[0].type)
         for (name, type) in p[3]:
             self.quadruples.append(QuadRuple(op='push', arg1=name, arg2=type, result=''))
+        self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples), arg2='int', result=''))
+        self.quadruples.append(QuadRuple(op='goto',
+                                         arg1=self.symtables[-1].meta[p[1]]['start'],
+                                         arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=p[0].place))
         print("Rule 99: call -> ID(args)")
 
     def p_args_1(self, p):
