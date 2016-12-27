@@ -39,6 +39,8 @@ class YEPCParser:
 
     def p_program(self, p):
         'program : programInitiator declarationList'
+        self.quadruples.append(QuadRuple(op='goto',
+                                         arg1=self.symtables[-1].meta['#aa11']['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
 
     def p_program_initiator(self, p):
@@ -193,18 +195,20 @@ class YEPCParser:
 
     def p_fun_declaration_1(self, p):
         '''
-        funDeclaration :  typeSpecifier ID funInitiator PR_OPEN params PR_CLOSE statement
+        funDeclaration :  typeSpecifier ID funInitiator PR_OPEN params PR_CLOSE quadder nexter statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[2], s)
+        self.symtables[-1].insert_procedure(p[2], s, p[7].quad)
+        YEPCEntity.backpatch(p[8].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_declaration_2(self, p):
         '''
-        funDeclaration : ID funInitiator PR_OPEN params PR_CLOSE statement
+        funDeclaration : ID funInitiator PR_OPEN params PR_CLOSE quadder nexter statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(p[1], s)
+        self.symtables[-1].insert_procedure(p[1], s, p[6].quad)
+        YEPCEntity.backpatch(p[7].next_list, len(self.quadruples))
         print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
     def p_fun_initiator(self, p):
