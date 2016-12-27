@@ -1068,13 +1068,13 @@ class YEPCParser:
         call : ID PR_OPEN args PR_CLOSE
         '''
         p[0] = YEPCEntity()
-        p[0].type = self.symtables[-1].meta[p[1]]['return_type']
+        p[0].type = self.symtables[0].meta[p[1]]['return_type']
         p[0].place = self.symtables[-1].new_temp(p[0].type)
         for (name, type) in p[3]:
             self.quadruples.append(QuadRuple(op='push', arg1=name, arg2=type, result=''))
         self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples), arg2='int', result=''))
         self.quadruples.append(QuadRuple(op='goto',
-                                         arg1=self.symtables[-1].meta[p[1]]['start'],
+                                         arg1=self.symtables[0].meta[p[1]]['start'],
                                          arg2='', result=''))
         self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=p[0].place))
         print("Rule 99: call -> ID(args)")
