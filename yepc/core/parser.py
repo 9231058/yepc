@@ -199,7 +199,7 @@ class YEPCParser:
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(p[2], s, p[5].quad, p[7])
-        YEPCEntity.backpatch(p[8].next_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_declaration_2(self, p):
@@ -253,6 +253,7 @@ class YEPCParser:
         p[0] = []
         for name in p[2]:
             p[0].append((name, p[1]))
+            self.symtables[-1].insert_variable(name, p[1])
         print("Rule 30: paramTypeList -> typeSpecifier paramIdList")
 
     def p_param_id_list(self, p):
@@ -1066,18 +1067,22 @@ class YEPCParser:
         '''
         call : ID PR_OPEN args PR_CLOSE
         '''
+        for (name, type) in p[3]:
+            self.quadruples.append(QuadRuple(op='push', arg1=name, arg2=type, result=''))
         print("Rule 99: call -> ID(args)")
 
     def p_args_1(self, p):
         '''
         args : argList
         '''
+        p[0] = p[1]
         print("Rule 100: args -> argList")
 
     def p_args_2(self, p):
         '''
         args : empty
         '''
+        p[0] = []
         print("Rule 101: args -> empty")
 
     def p_arg_list(self, p):
@@ -1086,8 +1091,10 @@ class YEPCParser:
                 | expression
         '''
         if len(p) == 4:
+            p[0] = p[1].append(p[3].place, self.symtables[-1].symbols[p[3].place])
             print("Rule 102: argList -> argList, expression")
         else:
+            p[0] = [(p[1].place, self.symtables[-1].symbols[p[1].place])]
             print("Rule 103: argList -> expression")
 
     def p_constant_1(self, p):
