@@ -5,7 +5,7 @@ class YEPCToC:
     def to_c(self):
         c_code = ""
 
-        c_code +="#include <stdio.h>\n"
+        c_code += "#include <stdio.h>\n"
         c_code += "int main(){\n"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]
@@ -36,7 +36,7 @@ class YEPCToC:
             c_code += line + "\n"
         c_code += "}"
         print("ouput.c generated")
-        return c_code;
+        return c_code
 
     def make_label(self, index):
         return "L" + str(index)
