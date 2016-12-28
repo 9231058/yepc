@@ -84,3 +84,8 @@ class SymbolTable:
                 raise KeyError(symbol)
             result = current.meta.get(symbol, None)
         return result
+
+    def get_symbol_name(self, name):
+        if name[0] == '#':
+            name = name[1:]
+        # First we must provide name section for symbol table.
