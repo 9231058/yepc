@@ -40,7 +40,7 @@ class YEPCParser:
     def p_program(self, p):
         'program : programInitiator declarationList'
         self.quadruples.append(QuadRuple(op='goto',
-                                         arg1=self.symtables[-1].meta['#aa11']['start'], arg2='', result=''))
+                                         arg1=self.symtables[0].meta['#aa11']['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
 
     def p_program_initiator(self, p):
