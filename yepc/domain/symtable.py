@@ -42,7 +42,6 @@ class SymbolTable:
     def new_temp(self, temp_type):
         temp_id = next(self.temp_id_generator)
         self.symbols[temp_id] = temp_type
-        print(self.symbols)
         return temp_id
 
     def insert_variable(self, var_id, var_type: str):
