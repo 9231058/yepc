@@ -51,8 +51,7 @@ class SymbolTable:
         self.symbols[var_id] = var_type
 
     def insert_scope(self, scope_table):
-        temp_id = next(self.scope_id_generator)
-        self.symbols[temp_id] = scope_table
+        self.symbols[scope_table.name] = scope_table
 
     def insert_procedure(self, proc_id, proc_table,
                          start=0, params=[], return_type='void'):
