@@ -50,15 +50,9 @@ class SymbolTable:
     def insert_scope(self, scope_table):
         self.symbols[scope_table.name] = scope_table
 
-    def insert_procedure(self, proc_table,
-                         start=0, params=[], return_type='void'):
+    def insert_procedure(self, proc_table):
         proc_id = proc_table.name
         self.symbols[proc_id] = proc_table
-        self.meta[proc_id] = {
-            'start': start,
-            'params': params,
-            'return_type': return_type
-        }
 
     def get_symbol_type(self, symbol):
         current = self
@@ -72,10 +66,12 @@ class SymbolTable:
         return result
 
     def get_symbol_name(self, symbol):
-        try:
-            return int(symbol)
-        except ValueError:
-            pass
+        '''
+        Get fully qualified name for your given symbol
+        if it exists in symbol table hierarchy.
+        '''
+        if symbol[0] != '#':
+            return symbol
         current = self
         result = current.symbols.get(symbol, None)
         while result is None:
@@ -98,10 +94,16 @@ class SymbolTable:
         return result
 
     def generate_symbol_name(self, name):
+        '''
+        Generate fully qualified name for your given name
+        based on symbol table hierarchy.
+        '''
         if name[0] == '#':
             name = name[1:]
         current = self
         while current is not None:
-            name = current.name + '_' + name
+            if current.name[0] == '#':
+                scope_name = current.name[1:]
+            name = scope_name + '_' + name
             current = current.parent
         return name
