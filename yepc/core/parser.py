@@ -990,7 +990,7 @@ class YEPCParser:
         else:
             p[0].place = self.symtables[-1].new_temp(p[2].type)
             p[0].type = p[2].type
-            self.quadruples.append(QuadRuple(op='-', arg1=p[2].place, arg2='',
+            self.quadruples.append(QuadRuple(op='-', arg1='0', arg2=p[2].place,
                                              result=p[0].place))
         print("Rule 87: unraryExpression -> MINUS unaryExpression")
 
