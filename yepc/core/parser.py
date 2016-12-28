@@ -41,7 +41,7 @@ class YEPCParser:
     def p_program(self, p):
         'program : programInitiator declarationList'
         self.quadruples.append(QuadRuple(op='goto',
-                                         arg1=self.symtables[0].meta['#aa11']['start'], arg2='', result=''))
+                                         arg1=self.symtables[0].symbols['#aa11'].header['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
         to_c = YEPCToC(self.quadruples)
         c_file = open("output.c", "w+")
@@ -204,7 +204,9 @@ class YEPCParser:
         funDeclaration :  funInitiator nexter quadder params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        self.symtables[-1].insert_procedure(s, p[2].quad, p[4], '!')
+        s.header['start'] = p[2].quad
+        s.header['params'] = p[4]
+        self.symtables[-1].insert_procedure(s)
         YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
@@ -212,14 +214,18 @@ class YEPCParser:
         '''
         funInitiator : ID PR_OPEN
         '''
-        self.symtables.append(SymbolTable(self.symtables[-1], p[1]))
+        s = SymbolTable(self.symtables[-1], p[1])
+        s.header['return_type'] = 'void'
+        self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
 
     def p_fun_initiator_2(self, p):
         '''
         funInitiator : typeSpecifier ID PR_OPEN
         '''
-        self.symtables.append(SymbolTable(self.symtables[-1], p[2]))
+        s = SymbolTable(self.symtables[-1], p[2])
+        s.header['return_type'] = p[1]
+        self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
 
     def p_params_1(self, p):
@@ -732,11 +738,11 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp('int')
                 p[0].type = 'int'
-                q1 = QuadRuple(op='=', arg1='1', arg2='', result=p[0].place)
+                q1 = QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q5 = QuadRuple(op='+', arg1=p[0].place, arg2='1', result=p[0].place)
+                q5 = QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[0].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
 
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
@@ -757,9 +763,9 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='+', arg1=p[1].place, arg2='1', result=p[0].place)
+                q1 = QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1=p[1].place, arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -777,9 +783,9 @@ class YEPCParser:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[4].type)
                 p[0].type = p[4].type
-                q1 = QuadRuple(op='-', arg1='1', arg2=p[4].place, result=p[0].place)
+                q1 = QuadRuple(op='-', arg1='1', arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1=p[4].place, arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[4].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -788,11 +794,11 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp('int')
                 p[0].type = 'int'
-                q1 = QuadRuple(op='=', arg1='1', arg2='', result=p[0].place)
+                q1 = QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q5 = QuadRuple(op='-', arg1=p[0].place, arg2='1', result=p[0].place)
+                q5 = QuadRuple(op='-', arg1=self.symtables[-1].get_symbol_name(p[0].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
 
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
@@ -806,14 +812,16 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
-                self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[4].place,
-                                                 result=p[0].place))
+                p[0].type = p[1].type
+                q = QuadRuple(op='-', arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                              arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
+                self.quadruples.append(q)
             else:
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='-', arg1=p[1].place, arg2='1', result=p[0].place)
+                q1 = QuadRuple(op='-', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1=p[1].place, arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -831,9 +839,9 @@ class YEPCParser:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[4].type)
                 p[0].type = p[4].type
-                q1 = QuadRuple(op='*', arg1='1', arg2=p[4].place, result=p[0].place)
+                q1 = QuadRuple(op='*', arg1='1', arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[4].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -842,11 +850,11 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp('int')
                 p[0].type = 'int'
-                q1 = QuadRuple(op='=', arg1='1', arg2='', result=p[0].place)
+                q1 = QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q5 = QuadRuple(op='*', arg1=p[0].place, arg2='1', result=p[0].place)
+                q5 = QuadRuple(op='*', arg1=self.symtables[-1].get_symbol_name(p[0].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
 
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
@@ -860,14 +868,16 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
-                self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[4].place,
-                                                 result=p[0].place))
+                p[0].type = p[1].type
+                q = QuadRuple(op='*', arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                              arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
+                self.quadruples.append(q)
             else:
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='*', arg1=p[1].place, arg2='1', result=p[0].place)
+                q1 = QuadRuple(op='*', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -885,9 +895,9 @@ class YEPCParser:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[4].type)
                 p[0].type = p[4].type
-                q1 = QuadRuple(op='%', arg1='1', arg2=p[4].place, result=p[0].place)
+                q1 = QuadRuple(op='%', arg1='1', arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[4].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -896,11 +906,11 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp('int')
                 p[0].type = 'int'
-                q1 = QuadRuple(op='=', arg1='1', arg2='', result=p[0].place)
+                q1 = QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q5 = QuadRuple(op='%', arg1=p[0].place, arg2='1', result=p[0].place)
+                q5 = QuadRuple(op='%', arg1=self.symtables[-1].get_symbol_name(p[0].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
 
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
@@ -914,14 +924,16 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
-                self.quadruples.append(QuadRuple(op='%', arg1=p[1].place, arg2=p[4].place,
-                                                 result=p[0].place))
+                p[0].type = p[1].type
+                q = QuadRuple(op='%', arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                              arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
+                self.quadruples.append(q)
             else:
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='%', arg1=p[1].place, arg2='1', result=p[0].place)
+                q1 = QuadRuple(op='%', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='%', arg1=p[1].place, arg2='0', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -939,9 +951,9 @@ class YEPCParser:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[4].type)
                 p[0].type = p[4].type
-                q1 = QuadRuple(op='/', arg1='1', arg2=p[4].place, result=p[0].place)
+                q1 = QuadRuple(op='/', arg1='1', arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[4].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
@@ -950,11 +962,11 @@ class YEPCParser:
             else:
                 p[0].place = self.symtables[-1].new_temp('int')
                 p[0].type = 'int'
-                q1 = QuadRuple(op='=', arg1='1', arg2='', result=p[0].place)
+                q1 = QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q3 = QuadRuple(op='=', arg1='0', arg2='', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q4 = QuadRuple(op='goto', arg1=p[3].quad, arg2='', result='')
-                q5 = QuadRuple(op='/', arg1=p[0].place, arg2='1', result=p[0].place)
+                q5 = QuadRuple(op='/', arg1=self.symtables[-1].get_symbol_name(p[0].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
 
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples) - 1)
@@ -968,14 +980,16 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
-                self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[4].place,
-                                                 result=p[0].place))
+                p[0].type = p[1].type
+                q = QuadRuple(op='/', arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                              arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
+                self.quadruples.append(q)
             else:
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
                 p[0].type = p[1].type
-                q1 = QuadRuple(op='/', arg1=p[1].place, arg2='1', result=p[0].place)
+                q1 = QuadRuple(op='/', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[0].place))
                 q2 = QuadRuple(op='goto', arg1=len(self.quadruples) + 3, arg2='', result='')
-                q3 = QuadRuple(op='/', arg1=p[1].place, arg2='0', result=p[0].place)
+                q3 = QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q1)
                 YEPCEntity.backpatch(p[4].true_list, len(self.quadruples) - 1)
                 self.quadruples.append(q2)
