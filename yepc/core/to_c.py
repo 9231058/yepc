@@ -30,8 +30,9 @@ class YEPCToC:
                 line += str(result) + " = " + str(arg1) + " / " + str(arg2) + ";"
             elif op == '%':
                 line += str(result) + " = " + str(arg1) + " % " + str(arg2) + ";"
-            elif op == "" or op == "=":
+            elif op == "=":
                 line += str(result) + " = " + str(arg1) + ";"
+
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_code += line + "\n"
         c_code += "}"
