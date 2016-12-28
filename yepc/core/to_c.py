@@ -7,6 +7,47 @@ class YEPCToC:
 
         c_code += "#include <stdio.h>\n"
         c_code += "#include <stdlib.h>\n"
+        c_code += '''
+struct Node {
+    int Data;
+    struct Node *next;
+}*top;
+
+void popStack() {
+    struct Node *temp, *var=top;
+        if(var==top) {
+            top = top->next;
+            free(var);
+        } else
+            printf("\\nStack Empty");
+}
+
+void push(int value) {
+    struct Node *temp;
+    temp=(struct Node *)malloc(sizeof(struct Node));
+    temp->Data=value;
+    if (top == NULL) {
+        top=temp;
+        top->next=NULL;
+    } else {
+        temp->next=top;
+        top=temp;
+    }
+}
+
+void display() {
+    struct Node *var=top;
+    if(var!=NULL) {
+        printf("\\nElements are as:\\n");
+        while(var!=NULL) {
+            printf("\\t%d\\n",var->Data);
+            var=var->next;
+        }
+        printf("\\n");
+    } else
+        printf("\\nStack is Empty");
+}\n
+'''
         c_code += "int main(){\n"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]

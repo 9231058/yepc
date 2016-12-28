@@ -205,7 +205,7 @@ class YEPCParser:
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(s, p[2].quad, p[4], '!')
-        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_initiator_1(self, p):
@@ -750,6 +750,7 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
+                p[0].type = p[1].type;
                 q = QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[1].place),
                               arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q)
