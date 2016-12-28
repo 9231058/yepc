@@ -8,6 +8,8 @@
 #
 # [] Created By : Saman Fekri (Samanf74@gmail.com)
 # =======================================
+import random
+import string
 
 
 class SymbolTable:
@@ -19,13 +21,16 @@ class SymbolTable:
     | jj1    | int  |
 
     '''
-    def __init__(self, parent):
+    def __init__(self, parent, name=None):
         self.symbols = {}
         self.header = {}
         self.meta = {}
         self.parent = parent
         self.temp_id_generator = self.temp_id_generator()
-        self.scope_id_generator = self.scope_id_generator()
+        if name is None:
+            self.name = SymbolTable.scope_id_generator()
+        else:
+            self.name = name
 
     def temp_id_generator(self):
         seq = 0
@@ -33,11 +38,9 @@ class SymbolTable:
             yield 'jj' + str(seq)
             seq += 1
 
-    def scope_id_generator(self):
-        seq = 0
-        while True:
-            yield 'js' + str(seq)
-            seq += 1
+    @staticmethod
+    def scope_id_generator():
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3))
 
     def new_temp(self, temp_type):
         temp_id = next(self.temp_id_generator)
@@ -59,9 +62,6 @@ class SymbolTable:
             'params': params,
             'return_type': return_type
         }
-
-    def add_width(self, width):
-        self.header[width] = width
 
     def get_symbol(self, symbol):
         current = self
