@@ -205,17 +205,8 @@ class YEPCParser:
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(s, p[2].quad, p[4], '!')
-        YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
-
-#    def p_fun_declaration_2(self, p):
-#        '''
-#        funDeclaration : funInitiator nexter quadder params PR_CLOSE statement
-#        '''
-#        s = self.symtables.pop()
-#        self.symtables[-1].insert_procedure(s, p[3].quad, p[4], 'void')
-#        YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
-#        print("Rule 25: funDeclaration -> ID funInitiator (params) statement")
 
     def p_fun_initiator_1(self, p):
         '''
@@ -237,7 +228,8 @@ class YEPCParser:
         '''
         p[0] = p[1]
         for (name, type) in p[0]:
-            self.quadruples.append(QuadRuple(op='pop', arg1=type, arg2='', result=name))
+            self.quadruples.append(
+                QuadRuple(op='pop', arg1=type, arg2='', result=self.symtables[-1].get_symbol_name(name)))
         print("Rule 26: params -> paramList")
 
     def p_params_2(self, p):
@@ -265,7 +257,6 @@ class YEPCParser:
         '''
         p[0] = []
         for name in p[2]:
-            name = self.symtables[-1].get_symbol_name(name)
             p[0].append((name, p[1]))
             self.symtables[-1].insert_variable(name, p[1])
         print("Rule 30: paramTypeList -> typeSpecifier paramIdList")
@@ -458,8 +449,9 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='', arg1=p[3].place, arg2='',
-                                         result=p[1].place))
+        self.quadruples.append(QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[3].place),
+                                         arg2='',
+                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 59: expression -> mutable EXP expression")
 
     def p_expression_2(self, p):
@@ -469,7 +461,10 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
+        self.quadruples.append(QuadRuple(op='+',
+                                         arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                                         arg2=self.symtables[-1].get_symbol_name(p[3].place),
+                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 60: expression -> mutable PLUSEXP expression")
 
     def p_expression_3(self, p):
@@ -479,7 +474,10 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
+        self.quadruples.append(QuadRuple(op='-',
+                                         arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                                         arg2=self.symtables[-1].get_symbol_name(p[3].place),
+                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 61: expression -> mutable MINUSEXP expression")
 
     def p_expression_4(self, p):
@@ -489,7 +487,10 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='*', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
+        self.quadruples.append(QuadRuple(op='*',
+                                         arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                                         arg2=self.symtables[-1].get_symbol_name(p[3].place),
+                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 62: expression -> mutable MULTEXP expression")
 
     def p_expression_5(self, p):
@@ -499,7 +500,10 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='/', arg1=p[1].place, arg2=p[3].place, result=p[1].place))
+        self.quadruples.append(QuadRuple(op='/',
+                                         arg1=self.symtables[-1].get_symbol_name(p[1].place),
+                                         arg2=self.symtables[-1].get_symbol_name(p[3].place),
+                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 63: expression -> mutable DIVEXP expression")
 
     def p_expression_6(self, p):
@@ -516,7 +520,8 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='+', arg1=p[1].place, arg2='1', result=p[1].place))
+        self.quadruples.append(
+            QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 65: expression -> mutable PLUSPLUS")
 
     def p_expression_8(self, p):
@@ -526,7 +531,8 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='-', arg1=p[1].place, arg2='1', result=p[1].place))
+        self.quadruples.append(
+            QuadRuple(op='-', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 66: expression -> mutable MINUSMINUS")
 
     def p_simple_expression_1(self, p):
@@ -537,15 +543,15 @@ class YEPCParser:
         p[0].type = 'bool'
         t1 = self.symtables[-1].new_temp('int')
         YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
 
         p[0].true_list = p[4].true_list
         YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % t1, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
         self.quadruples.append(qf)
@@ -563,15 +569,15 @@ class YEPCParser:
         p[0].type = 'bool'
         t1 = self.symtables[-1].new_temp('int')
         YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=t1))
+        self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
 
         p[0].false_list = p[4].false_list
         YEPCEntity.backpatch(p[4].true_list, len(self.quadruples))
-        self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % t1, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
         self.quadruples.append(qf)
@@ -648,7 +654,9 @@ class YEPCParser:
             p[0] = YEPCEntity()
             p[0].type = 'bool'
             self.quadruples.append(QuadRuple(op='if', result='',
-                                             arg1='%s %s %s' % (p[1].place, p[2], p[3].place),
+                                             arg1='%s %s %s' % (self.symtables[-1].get_symbol_name(p[1].place),
+                                                                self.symtables[-1].get_symbol_name(p[2]),
+                                                                self.symtables[-1].get_symbol_name(p[3].place)),
                                              arg2=''))
             qt = QuadRuple(op='goto', result='', arg1='-', arg2='')
             qf = QuadRuple(op='goto', result='', arg1='-', arg2='')
@@ -742,7 +750,6 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
-                p[0].type = p[1].type
                 q = QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[1].place),
                               arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q)
