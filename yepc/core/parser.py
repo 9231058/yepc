@@ -742,6 +742,7 @@ class YEPCParser:
         else:
             if p[4].type != 'bool':
                 p[0].place = self.symtables[-1].new_temp(p[1].type)
+                p[0].type = p[1].type
                 q = QuadRuple(op='+', arg1=self.symtables[-1].get_symbol_name(p[1].place),
                               arg2=self.symtables[-1].get_symbol_name(p[4].place), result=self.symtables[-1].get_symbol_name(p[0].place))
                 self.quadruples.append(q)

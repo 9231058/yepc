@@ -42,6 +42,7 @@ class SymbolTable:
     def new_temp(self, temp_type):
         temp_id = next(self.temp_id_generator)
         self.symbols[temp_id] = temp_type
+        print(self.symbols)
         return temp_id
 
     def insert_variable(self, var_id, var_type: str):
@@ -101,8 +102,7 @@ class SymbolTable:
         if name[0] == '#':
             name = name[1:]
         current = self
-        name = current.name + '_' + name
         while current is not None:
-            current = current.parent
             name = current.name + '_' + name
+            current = current.parent
         return name
