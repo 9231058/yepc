@@ -88,4 +88,9 @@ class SymbolTable:
     def get_symbol_name(self, name):
         if name[0] == '#':
             name = name[1:]
-        # First we must provide name section for symbol table.
+        current = self
+        name = current.name + '_' + name
+        while current is not None:
+            name = current.name + '_' + name
+            current = current.parent
+        return name
