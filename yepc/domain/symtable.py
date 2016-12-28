@@ -75,6 +75,10 @@ class SymbolTable:
         return result
 
     def get_symbol_name(self, symbol):
+        try:
+            return int(symbol)
+        except ValueError:
+            pass
         current = self
         result = current.symbols.get(symbol, None)
         while result is None:

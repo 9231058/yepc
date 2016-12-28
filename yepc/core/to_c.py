@@ -6,6 +6,7 @@ class YEPCToC:
         c_code = ""
 
         c_code += "#include <stdio.h>\n"
+        c_code += "#include <stdlib.h>\n"
         c_code += "int main(){\n"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]
@@ -32,7 +33,8 @@ class YEPCToC:
                 line += str(result) + " = " + str(arg1) + " % " + str(arg2) + ";"
             elif op == "=":
                 line += str(result) + " = " + str(arg1) + ";"
-
+            elif op == "rand":
+                line += str(result) + " = rand();"
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_code += line + "\n"
         c_code += "}"

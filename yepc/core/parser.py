@@ -205,7 +205,7 @@ class YEPCParser:
         '''
         s = self.symtables.pop()
         self.symtables[-1].insert_procedure(s, p[2].quad, p[4], '!')
-        YEPCEntity.backpatch(p[4].next_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
 #    def p_fun_declaration_2(self, p):
