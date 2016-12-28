@@ -8,11 +8,11 @@
 #
 # [] Created By : Saman Fekri (Samanf74@gmail.com)
 # =======================================
-import random
-import string
 
 
 class SymbolTable:
+    scope_seq = 0
+
     '''
     Provides symbol table in our front end compiler
 
@@ -28,7 +28,8 @@ class SymbolTable:
         self.parent = parent
         self.temp_id_generator = self.temp_id_generator()
         if name is None:
-            self.name = SymbolTable.scope_id_generator()
+            self.name = 'scp' + str(SymbolTable.scope_seq)
+            SymbolTable.scope_seq += 1
         else:
             self.name = name
 
@@ -37,10 +38,6 @@ class SymbolTable:
         while True:
             yield 'jj' + str(seq)
             seq += 1
-
-    @staticmethod
-    def scope_id_generator():
-        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(3))
 
     def new_temp(self, temp_type):
         temp_id = next(self.temp_id_generator)
@@ -106,6 +103,6 @@ class SymbolTable:
         current = self
         name = current.name + '_' + name
         while current is not None:
-            name = current.name + '_' + name
             current = current.parent
+            name = current.name + '_' + name
         return name
