@@ -76,6 +76,10 @@ void display() {
                 line += str(result) + " = " + str(arg1) + ";"
             elif op == "rand":
                 line += str(result) + " = rand();"
+            elif op == "push":
+                line += "stack_push(&%s, sizeof(%s));" % (arg1, arg2)
+            elif op == "pop":
+                line += "stack_pop(&%s, sizeof(%s));" % (result, arg1)
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_code += line + "\n"
         c_code += "}"
