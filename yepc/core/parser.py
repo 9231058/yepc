@@ -102,8 +102,15 @@ class YEPCParser:
         scopedVarDeclaration : scopedTypeSpecifier varDeclarationList SEMICOLON
         '''
         for (name, value) in p[2]:
-            self.symtables[-1].insert_variable(name, p[1])
+            if '.' in name:
+                # Handling arrays
+                name, size = name.split('.')
+                self.symtables[-1].insert_variable(name, p[1] + '.' + size)
+            else:
+                # Hanling single variables
+                self.symtables[-1].insert_variable(name, p[1])
             name = self.symtables[-1].get_symbol_name(name)
+            value = self.symtables[-1].get_symbol_name(value)
             self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
         print("Rule 9: scopedVarDeclaration ->",
               "scopedTypeSpecifier varDeclarationList;")
@@ -145,7 +152,7 @@ class YEPCParser:
             p[0] = p[1]
         else:
             print("Rule 15: varDeclarationId -> ID [ NUMCONST ]")
-            p[0] = '%s[%d]' % (p[1], p[3])
+            p[0] = '%s.%d' % (p[1], p[3])
 
     def p_scoped_type_specifier(self, p):
         '''
