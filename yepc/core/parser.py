@@ -90,16 +90,9 @@ class YEPCParser:
     def p_var_declaration(self, p):
         '''
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
-        '''
-        for (name, value) in p[2]:
-            self.symtables[-1].insert_variable(name, p[1])
-            name = self.symtables[-1].get_symbol_name(name)
-            self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
-        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
-
-    def p_scoped_var_declaration(self, p):
-        '''
-        scopedVarDeclaration : scopedTypeSpecifier varDeclarationList SEMICOLON
+                       | STATIC_KW typeSpecifier varDeclarationList SEMICOLON
+                       | ID varDeclarationList SEMICOLON
+                       | STATIC_KW ID varDeclarationList SEMICOLON
         '''
         for (name, value) in p[2]:
             if '.' in name:
@@ -112,8 +105,7 @@ class YEPCParser:
             name = self.symtables[-1].get_symbol_name(name)
             value = self.symtables[-1].get_symbol_name(value)
             self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
-        print("Rule 9: scopedVarDeclaration ->",
-              "scopedTypeSpecifier varDeclarationList;")
+        print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
 
     def p_var_declaration_list(self, p):
         '''
@@ -154,29 +146,13 @@ class YEPCParser:
             print("Rule 15: varDeclarationId -> ID [ NUMCONST ]")
             p[0] = '%s.%d' % (p[1], p[3])
 
-    def p_scoped_type_specifier(self, p):
-        '''
-        scopedTypeSpecifier : STATIC_KW typeSpecifier
-                            | typeSpecifier
-        '''
-        if len(p) == 3:
-            print("Rule 16: scopedTypeSpecifier -> STATIC_KW typeSpecifier")
-            p[0] = p[2]
-        else:
-            print("Rule 17: scopedTypeSpecifier -> typeSpecifier")
-            p[0] = p[1]
-
     def p_type_specifier(self, p):
         '''
         typeSpecifier : returnTypeSpecifier
-                      | RECORD_KW ID
         '''
         if len(p) == 2:
             print("Rule 18: typeSpecifier -> returnTypeSpecifier")
             p[0] = p[1]
-        else:
-            print("Rule 19: typeSpecifier -> RECORD_KW ID")
-            p[0] = p[2]
 
     def p_return_type_specifier_1(self, p):
         '''
@@ -351,15 +327,15 @@ class YEPCParser:
 
     def p_local_declarations(self, p):
         '''
-        localDeclarations : localDeclarations scopedVarDeclaration
+        localDeclarations : localDeclarations varDeclaration
                           | empty
         '''
         if len(p) == 3:
             print("Rule 42: localDeclarations ->",
-                  "localDeclarations scopedVarDeclaration")
+                  "localDeclarations varDeclaration")
         else:
             print("Rule 43: localDeclarations ->",
-                  "localDeclarations scopedVarDeclaration")
+                  "empty")
 
     def p_statement_list(self, p):
         '''
