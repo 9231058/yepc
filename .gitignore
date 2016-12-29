@@ -99,3 +99,6 @@ fabric.properties
 ### Python Lex Yacc (PLY)
 parser.out
 parsetab.py
+
+### Outpt
+output.c
