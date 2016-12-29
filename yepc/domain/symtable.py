@@ -70,7 +70,7 @@ class SymbolTable:
         Get fully qualified name for your given symbol
         if it exists in symbol table hierarchy.
         '''
-        if symbol[0] != '#':
+        if not isinstance(symbol, str) or symbol[0] != '#':
             return symbol
         current = self
         result = current.symbols.get(symbol, None)
@@ -104,6 +104,8 @@ class SymbolTable:
         while current is not None:
             if current.name[0] == '#':
                 scope_name = current.name[1:]
+            else:
+                scope_name = current.name
             name = scope_name + '_' + name
             current = current.parent
         return name
