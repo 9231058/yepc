@@ -6,6 +6,7 @@ class YEPCEntity:
         self.type = None
         self.place = None
         self.quad = 0
+        self.case_dict = []
 
     @staticmethod
     def backpatch(quad_list, target):
