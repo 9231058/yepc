@@ -39,9 +39,9 @@ class YEPCToC:
 
         # QuadRuples to code
         c_code += "int main(){\n"
-        c_code += "struct stack *yepc_stack;\n"
+        c_code += "\tstruct stack *yepc_stack;\n"
         c_code += "\n"
-        c_code += "yepc_stack = stack_create();"
+        c_code += "\tyepc_stack = stack_create();\n"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]
             label = self.make_label(i) + ":"
