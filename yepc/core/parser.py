@@ -434,7 +434,12 @@ class YEPCParser:
             self.quadruples.append(q2)
             case_next.append(case_entry[1])
 
+        q = QuadRuple(op='goto', arg1=str(p[7].quad), arg2='', result='')
+        self.quadruples.append(q)
+
         YEPCEntity.backpatch(case_next, len(self.quadruples))
+
+        YEPCEntity.backpatch(p[7].next_list, len(self.quadruples))
 
         print("Rule 50: selectionStmt ->",
               "SWITCH_KW (simpleExpression) caseElement defaultElement END_KW")
@@ -462,15 +467,23 @@ class YEPCParser:
         print("Rule 52: caseElement ->",
                   "caseElement CASE_KW NUMCONST: statement")
 
-    def p_default_element(self, p):
+    def p_default_element_1(self, p):
         '''
-        defaultElement : DEFAULT_KW COLON statement
-                       | empty
+        defaultElement : DEFAULT_KW COLON quadder statement nexter
         '''
-        if len(p) == 4:
-            print("Rule 53: defaultElement -> DEFAULT_KW: statement")
-        else:
-            print("Rule 54: defaultElement -> empty")
+        p[0] = YEPCEntity()
+        p[0].next_list = p[5].next_list
+        p[0].quad = p[3].quad
+        print("Rule 53: defaultElement -> DEFAULT_KW: statement")
+
+
+    def p_default_element_2(self, p):
+        '''
+        defaultElement : empty nexter
+        '''
+        p[0] = YEPCEntity()
+        p[0].next_list = p[2].next_list
+        print("Rule 54: defaultElement -> empty")
 
     def p_iteration_stmt(self, p):
         '''
