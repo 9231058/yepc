@@ -100,5 +100,5 @@ fabric.properties
 parser.out
 parsetab.py
 
-### Outpt
-output.c
+### Yepc Generated
+out/
