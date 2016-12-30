@@ -36,7 +36,7 @@ class SymbolTable:
     def temp_id_generator(self):
         seq = 0
         while True:
-            yield 'jj' + str(seq)
+            yield '#jj' + str(seq)
             seq += 1
 
     def new_temp(self, temp_type):
