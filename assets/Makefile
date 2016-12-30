@@ -8,4 +8,4 @@ yepc-output: main.o stack.o
 
 .PHONY: clean
 clean:
-	rm output.o stack.o
+	rm yepc-output main.o stack.o
