@@ -92,9 +92,17 @@ class YEPCParser:
         varDeclaration : typeSpecifier varDeclarationList SEMICOLON
         '''
         for (name, value) in p[2]:
-            self.symtables[-1].insert_variable(name, p[1])
-            name = self.symtables[-1].get_symbol_name(name)
-            self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
+            if '.' in name:
+                # Handling arrays
+                name, size = name.split('.')
+                self.symtables[-1].insert_variable(name, p[1] + '.' + size)
+            else:
+                # Hanling single variables
+                self.symtables[-1].insert_variable(name, p[1])
+            if value is not None:
+                name = self.symtables[-1].get_symbol_name(name)
+                value = self.symtables[-1].get_symbol_name(value)
+                self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
         print("Rule 8: varDeclaration -> typeSpecifier varDeclarationList;")
 
     def p_scoped_var_declaration(self, p):
@@ -109,9 +117,10 @@ class YEPCParser:
             else:
                 # Hanling single variables
                 self.symtables[-1].insert_variable(name, p[1])
-            name = self.symtables[-1].get_symbol_name(name)
-            value = self.symtables[-1].get_symbol_name(value)
-            self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
+            if value is not None:
+                name = self.symtables[-1].get_symbol_name(name)
+                value = self.symtables[-1].get_symbol_name(value)
+                self.quadruples.append(QuadRuple(op='=', arg1=value, arg2='', result=name))
         print("Rule 9: scopedVarDeclaration ->",
               "scopedTypeSpecifier varDeclarationList;")
 
@@ -135,7 +144,7 @@ class YEPCParser:
         '''
         if len(p) == 2:
             print("Rule 12: varDeclarationInitialize -> varDeclarationId")
-            p[0] = (p[1], '0')
+            p[0] = (p[1], None)
         else:
             print("Rule 13: varDeclarationInitialize ->",
                   "varDeclarationId: simpleExpression")
