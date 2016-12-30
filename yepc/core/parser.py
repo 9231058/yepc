@@ -51,7 +51,7 @@ class YEPCParser:
     def p_program_initiator(self, p):
         'programInitiator : empty'
         print("Rule *: programInitiator -> empty")
-        self.symtables.append(SymbolTable(None, 'root'))
+        self.symtables.append(SymbolTable(None, 'scope', 'root'))
 
     def p_declaration_list(self, p):
         '''
@@ -83,9 +83,18 @@ class YEPCParser:
 
     def p_rec_declaration(self, p):
         '''
-        recDeclaration : RECORD_KW ID BR_OPEN localDeclarations BR_CLOSE
+        recDeclaration : recInitiator localDeclarations BR_CLOSE
         '''
+        s = self.symtables.pop()
+        self.symtables[-1].insert_scope(s)
         print("Rule 7: recDeclaration -> RECORD_KW ID {localDeclarations}")
+
+    def p_rec_initiator(self, p):
+        '''
+        recInitiator : RECORD_KW ID BR_OPEN
+        '''
+        self.symtables.append(SymbolTable(self.symtables[-1], 'record', p[2]))
+        print("Rule *: recInitiator -> RECORD_KW ID {")
 
     def p_var_declaration(self, p):
         '''
@@ -230,7 +239,7 @@ class YEPCParser:
         '''
         funInitiator : ID PR_OPEN
         '''
-        s = SymbolTable(self.symtables[-1], p[1])
+        s = SymbolTable(self.symtables[-1], 'function', p[1])
         s.header['return_type'] = 'void'
         self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
@@ -239,7 +248,7 @@ class YEPCParser:
         '''
         funInitiator : typeSpecifier ID PR_OPEN
         '''
-        s = SymbolTable(self.symtables[-1], p[2])
+        s = SymbolTable(self.symtables[-1], 'function', p[2])
         s.header['return_type'] = p[1]
         self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
@@ -355,7 +364,7 @@ class YEPCParser:
         '''
         scopeInitiator : empty
         '''
-        self.symtables.append(SymbolTable(self.symtables[-1]))
+        self.symtables.append(SymbolTable(self.symtables[-1], 'scope'))
         print("Rule *: scopeInitiator -> empty")
 
     def p_local_declarations(self, p):
