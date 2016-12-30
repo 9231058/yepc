@@ -44,7 +44,7 @@ class YEPCParser:
                                          arg1=self.symtables[0].symbols['#aa11'].header['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
         to_c = YEPCToC(self.quadruples, self.symtables[0])
-        c_file = open("output.c", "w+")
+        c_file = open("out/main.c", "w+")
         c_file.write(to_c.to_c())
         c_file.close()
 
@@ -474,7 +474,6 @@ class YEPCParser:
         p[0].next_list = p[5].next_list
         p[0].quad = p[3].quad
         print("Rule 53: defaultElement -> DEFAULT_KW: statement")
-
 
     def p_default_element_2(self, p):
         '''
