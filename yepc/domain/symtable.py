@@ -21,7 +21,7 @@ class SymbolTable:
     | jj1    | int  |
 
     '''
-    def __init__(self, parent, name=None):
+    def __init__(self, parent, type, name=None):
         self.symbols = {}
         self.header = {}
         self.meta = {}
