@@ -421,20 +421,45 @@ class YEPCParser:
 
     def p_selection_stmt_3(self, p):
         '''
-        selectionStmt : SWITCH_KW PR_OPEN simpleExpression PR_CLOSE caseElement defaultElement END_KW
+        selectionStmt : SWITCH_KW PR_OPEN simpleExpression PR_CLOSE nexter caseElement defaultElement END_KW quadder
         '''
+        YEPCEntity.backpatch(p[5].next_list, p[9].quad)
+        case_next = []
+        for i in range(len(p[6].case_dict)):
+            key = p[6].case_dict[i][0]
+            case_entry = p[6].case_dict[i][1]
+            q1 = QuadRuple(op='if', arg1=str(p[3].place)+' == '+ str(key), arg2='', result='')
+            q2 = QuadRuple(op='goto', arg1=str(case_entry[0]), arg2='', result='')
+            self.quadruples.append(q1)
+            self.quadruples.append(q2)
+            case_next.append(case_entry[1])
+
+        YEPCEntity.backpatch(case_next, len(self.quadruples))
+
         print("Rule 50: selectionStmt ->",
               "SWITCH_KW (simpleExpression) caseElement defaultElement END_KW")
 
-    def p_case_element(self, p):
+    def p_case_element_1(self, p):
         '''
-        caseElement : CASE_KW NUMCONST COLON statement
-                    | caseElement CASE_KW NUMCONST COLON statement
+        caseElement : CASE_KW NUMCONST COLON quadder statement
         '''
-        if len(p) == 5:
-            print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
-        else:
-            print("Rule 52: caseElement ->",
+        p[0] = YEPCEntity()
+        q1 = QuadRuple(op='goto' , arg1='-', arg2='',result='')
+        self.quadruples.append(q1)
+        p[0].case_dict.append([str(p[2]), [str(p[4].quad), q1]])
+        print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
+
+
+    def p_case_element_2(self, p):
+        '''
+        caseElement : caseElement CASE_KW NUMCONST COLON quadder statement
+        '''
+        p[0] = YEPCEntity()
+        q1 = QuadRuple(op='goto' , arg1='-', arg2='',result='')
+        self.quadruples.append(q1)
+        p[0].case_dict += (p[1].case_dict)
+        p[0].case_dict.append([str(p[3]), [str(p[5].quad), q1]])
+        print("Rule 52: caseElement ->",
                   "caseElement CASE_KW NUMCONST: statement")
 
     def p_default_element(self, p):
