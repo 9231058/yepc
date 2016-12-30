@@ -121,8 +121,8 @@ def code_handler():
     return c_generator.to_c()
 
 
-@app.route('/download', methods=['POST'])
-def download_handler():
+@app.route('/generate', methods=['POST'])
+def generate_handler():
     data = flask.request.data.decode('ASCII')
 
     parser = YEPCParser()
@@ -135,10 +135,15 @@ def download_handler():
     tar_name = 'yepc-%d-1820.tar.gz' % int(time.time()*100)
 
     tar = tarfile.open('out/%s' % tar_name, 'w:gz')
-    tar.add('out/main.c')
-    tar.add('assets/stack.h')
-    tar.add('assets/stack.c')
-    tar.add('assets/Makefile')
+    tar.add('out/main.c', 'yepc-output/main.c')
+    tar.add('assets/stack.h', 'yepc-output/stack.h')
+    tar.add('assets/stack.c', 'yepc-output/stack.c')
+    tar.add('assets/Makefile', 'yepc-output/Makefile')
     tar.close()
 
-    return flask.send_from_directory('out', tar_name)
+    return tar_name
+
+
+@app.route('/download/<string:name>', methods=['GET'])
+def download_handler(name):
+    return flask.send_from_directory('out', name)
