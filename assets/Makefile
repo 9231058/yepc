@@ -1,9 +1,9 @@
 all: yepc-output
 
-yepc-output: output.o stack.o
+yepc-output: main.o stack.o
 	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
 
-%.o: %.c functions.h
+%.o: %.c stack.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
