@@ -206,12 +206,12 @@ class YEPCParser:
         print("Rule 23: returnTypeSpecifier -> CHAR_T")
         p[0] = 'char'
 
-    def p_fun_declaration_1(self, p):
+    def p_fun_declaration(self, p):
         '''
         funDeclaration :  funInitiator nexter quadder params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        s.header['start'] = p[2].quad
+        s.header['start'] = p[3].quad
         s.header['params'] = p[4]
         self.symtables[-1].insert_procedure(s)
         YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
@@ -1110,6 +1110,7 @@ class YEPCParser:
         '''
         immutable : call
         '''
+        p[0] = p[1]
         print("Rule 97: immutable -> call")
 
     def p_immutable_3(self, p):
@@ -1124,15 +1125,15 @@ class YEPCParser:
         call : ID PR_OPEN args PR_CLOSE
         '''
         p[0] = YEPCEntity()
-        p[0].type = self.symtables[0].meta[p[1]]['return_type']
+        p[0].type = self.symtables[0].symbols[p[1]].header['return_type']
         p[0].place = self.symtables[-1].new_temp(p[0].type)
-        for (name, type) in p[3]:
+        self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples) + len(p[3]), arg2='int', result=''))
+        for (name, type) in reversed(p[3]):
             self.quadruples.append(QuadRuple(op='push', arg1=self.symtables[-1].get_symbol_name(name), arg2=type, result=''))
-        self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples), arg2='int', result=''))
         self.quadruples.append(QuadRuple(op='goto',
-                                         arg1=self.symtables[0].meta[p[1]]['start'],
+                                         arg1=self.symtables[0].symbols[p[1]].header['start'],
                                          arg2='', result=''))
-        self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=p[0].place))
+        self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=self.symtables[-1].get_symbol_name(p[0].place)))
         print("Rule 99: call -> ID(args)")
 
     def p_args_1(self, p):
