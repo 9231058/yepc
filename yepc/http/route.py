@@ -8,6 +8,8 @@
 # =======================================
 import flask
 import json
+import tarfile
+import time
 
 from . import app
 from ..core.lex import YEPCLexer
@@ -41,7 +43,8 @@ def root_handler():
 
 @app.route('/lex', methods=['POST'])
 def lex_handler():
-    data = str(flask.request.data)
+    data = flask.request.data.decode('ASCII')
+
     result = []
 
     l = lexer.build()
@@ -63,7 +66,8 @@ def lex_handler():
 
 @app.route('/yacc', methods=['POST'])
 def yacc_handler():
-    data = str(flask.request.data)
+    data = flask.request.data.decode('ASCII')
+
     results = {
         'quadruples': [],
         'symtables': {}
@@ -103,7 +107,7 @@ def yacc_handler():
 
 @app.route('/code', methods=['POST'])
 def code_handler():
-    data = str(flask.request.data)
+    data = flask.request.data.decode('ASCII')
 
     parser = YEPCParser()
 
@@ -115,3 +119,25 @@ def code_handler():
     c_generator = YEPCToC(parser.quadruples, parser.symtables[0])
 
     return c_generator.to_c()
+
+
+@app.route('/download', methods=['POST'])
+def download_handler():
+    data = flask.request.data.decode('ASCII')
+
+    parser = YEPCParser()
+
+    l = lexer.build()
+    p = parser.build()
+
+    p.parse(data, lexer=l, debug=False)
+
+    tar_name = 'yepc-%d-1820.tar.gz' % int(time.time()*100)
+
+    tar = tarfile.open('out/%s' % tar_name, 'w:gz')
+    tar.add('out/main.c')
+    tar.add('assets/stack.h')
+    tar.add('assets/stack.c')
+    tar.add('assets/Makefile')
+
+    return flask.send_from_directory('out', tar_name)
