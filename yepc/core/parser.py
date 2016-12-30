@@ -43,7 +43,7 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[0].symbols['#aa11'].header['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
-        to_c = YEPCToC(self.quadruples, self.symtbales[0])
+        to_c = YEPCToC(self.quadruples, self.symtables[0])
         c_file = open("output.c", "w+")
         c_file.write(to_c.to_c())
         c_file.close()
