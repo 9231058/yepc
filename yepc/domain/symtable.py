@@ -27,6 +27,7 @@ class SymbolTable:
         self.meta = {}
         self.parent = parent
         self.temp_id_generator = self.temp_id_generator()
+        self.type = type
         if name is None:
             self.name = 'scp' + str(SymbolTable.scope_seq)
             SymbolTable.scope_seq += 1
