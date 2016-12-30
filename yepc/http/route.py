@@ -139,5 +139,6 @@ def download_handler():
     tar.add('assets/stack.h')
     tar.add('assets/stack.c')
     tar.add('assets/Makefile')
+    tar.close()
 
     return flask.send_from_directory('out', tar_name)
