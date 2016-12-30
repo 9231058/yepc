@@ -29,19 +29,19 @@ def about_handler():
 
 @app.route('/<path:path>', methods=['GET'])
 def ui_handler(path):
-    return flask.send_from_directory('yepc-UI', path)
+    return flask.send_from_directory('yepc-UI/dist', path)
 
 
 @app.route('/', methods=['GET'])
 def root_handler():
-    return flask.send_file('yepc-UI/index.html')
+    return flask.send_file('yepc-UI/dist/index.html')
 
 
 # Lex Phase
 
 @app.route('/lex', methods=['POST'])
 def lex_handler():
-    data = flask.request.form['text']
+    data = str(flask.request.data)
     result = []
 
     l = lexer.build()
@@ -63,7 +63,7 @@ def lex_handler():
 
 @app.route('/yacc', methods=['POST'])
 def yacc_handler():
-    data = flask.request.form['text']
+    data = str(flask.request.data)
     results = {
         'quadruples': [],
         'symtables': {}
@@ -95,7 +95,7 @@ def yacc_handler():
                 result[tk] = tv
             elif isinstance(tv, SymbolTable):
                 symtables[tk] = tv
-                result[tk] = "function"
+                result[tk] = tv.type
         results['symtables'][name] = result
 
     return json.dumps(results)
@@ -103,7 +103,7 @@ def yacc_handler():
 
 @app.route('/code', methods=['POST'])
 def code_handler():
-    data = flask.request.form['text']
+    data = str(flask.request.data)
 
     parser = YEPCParser()
 
@@ -112,6 +112,6 @@ def code_handler():
 
     p.parse(data, lexer=l, debug=False)
 
-    c_generator = YEPCToC(parser.quadruples)
+    c_generator = YEPCToC(parser.quadruples, parser.symtables[0])
 
     return c_generator.to_c()
