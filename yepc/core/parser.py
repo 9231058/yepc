@@ -43,7 +43,7 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[0].symbols['#aa11'].header['start'], arg2='', result=''))
         print("Rule 1: program -> declarationList")
-        to_c = YEPCToC(self.quadruples)
+        to_c = YEPCToC(self.quadruples, self.symtables[0])
         c_file = open("output.c", "w+")
         c_file.write(to_c.to_c())
         c_file.close()
@@ -428,7 +428,7 @@ class YEPCParser:
         for i in range(len(p[6].case_dict)):
             key = p[6].case_dict[i][0]
             case_entry = p[6].case_dict[i][1]
-            q1 = QuadRuple(op='if', arg1=str(p[3].place)+' == '+ str(key), arg2='', result='')
+            q1 = QuadRuple(op='if', arg1=str(p[3].place)+' == ' + str(key), arg2='', result='')
             q2 = QuadRuple(op='goto', arg1=str(case_entry[0]), arg2='', result='')
             self.quadruples.append(q1)
             self.quadruples.append(q2)
@@ -449,23 +449,22 @@ class YEPCParser:
         caseElement : CASE_KW NUMCONST COLON quadder statement
         '''
         p[0] = YEPCEntity()
-        q1 = QuadRuple(op='goto' , arg1='-', arg2='',result='')
+        q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
         self.quadruples.append(q1)
         p[0].case_dict.append([str(p[2]), [str(p[4].quad), q1]])
         print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
-
 
     def p_case_element_2(self, p):
         '''
         caseElement : caseElement CASE_KW NUMCONST COLON quadder statement
         '''
         p[0] = YEPCEntity()
-        q1 = QuadRuple(op='goto' , arg1='-', arg2='',result='')
+        q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
         self.quadruples.append(q1)
         p[0].case_dict += (p[1].case_dict)
         p[0].case_dict.append([str(p[3]), [str(p[5].quad), q1]])
         print("Rule 52: caseElement ->",
-                  "caseElement CASE_KW NUMCONST: statement")
+              "caseElement CASE_KW NUMCONST: statement")
 
     def p_default_element_1(self, p):
         '''

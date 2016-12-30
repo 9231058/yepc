@@ -1,53 +1,38 @@
+from ..domain.symtable import SymbolTable
+
+
 class YEPCToC:
-    def __init__(self, quadruples):
+    def __init__(self, quadruples, symtable):
         self.quadruples = quadruples
+        self.symtable = symtable
 
     def to_c(self):
         c_code = ""
 
+        # Includes :)
         c_code += "#include <stdio.h>\n"
         c_code += "#include <stdlib.h>\n"
-        c_code += '''
-struct Node {
-    int Data;
-    struct Node *next;
-}*top;
 
-void popStack() {
-    struct Node *temp, *var=top;
-        if(var==top) {
-            top = top->next;
-            free(var);
-        } else
-            printf("\\nStack Empty");
-}
+        # Variable declaration based on BFS
+        q = []
+        q.append(self.symtable)
+        while bool(q):
+            t = q.pop()
+            for symbol in t.symbols:
+                if isinstance(t.symbols[symbol], str):
+                    c_code += '%s %s;\n' % (t.symbols[symbol], t.get_symbol_name(symbol))
+                elif isinstance(t.symbols[symbol], SymbolTable):
+                    s = t.symbols[symbol]
+                    if s.type == 'record':
+                        c_code += 'struct %s {\n' % s.name[1:]
+                        for (name, type) in s.symbols.items():
+                            if type[0] == '#':
+                                type = type[1:]
+                            c_code += "\t%s %s;\n" % (type, name[1:])
+                        c_code += '};\n'
+                    else:
+                        q.append(s)
 
-void push(int value) {
-    struct Node *temp;
-    temp=(struct Node *)malloc(sizeof(struct Node));
-    temp->Data=value;
-    if (top == NULL) {
-        top=temp;
-        top->next=NULL;
-    } else {
-        temp->next=top;
-        top=temp;
-    }
-}
-
-void display() {
-    struct Node *var=top;
-    if(var!=NULL) {
-        printf("\\nElements are as:\\n");
-        while(var!=NULL) {
-            printf("\\t%d\\n",var->Data);
-            var=var->next;
-        }
-        printf("\\n");
-    } else
-        printf("\\nStack is Empty");
-}\n
-'''
         c_code += "int main(){\n"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]
@@ -81,7 +66,7 @@ void display() {
             elif op == "pop":
                 line += "stack_pop(&%s, sizeof(%s));" % (result, arg1)
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
-            c_code += line + "\n"
+            c_code += "\t" + line + "\n"
         c_code += "}"
         print("ouput.c generated")
         return c_code
