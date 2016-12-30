@@ -12,6 +12,9 @@ class YEPCToC:
         # Includes :)
         c_code += "#include <stdio.h>\n"
         c_code += "#include <stdlib.h>\n"
+        c_code += '\n'
+        c_code += '#include "stack.h"\n'
+        c_code += '\n'
 
         # Variable declaration based on BFS
         q = []
@@ -32,8 +35,13 @@ class YEPCToC:
                         c_code += '};\n'
                     else:
                         q.append(s)
+        c_code += '\n'
 
+        # QuadRuples to code
         c_code += "int main(){\n"
+        c_code += "struct stack *yepc_stack;\n"
+        c_code += "\n"
+        c_code += "yepc_stack = stack_create();"
         for i in range(len(self.quadruples)):
             entry = self.quadruples[i]
             label = self.make_label(i) + ":"
@@ -62,9 +70,9 @@ class YEPCToC:
             elif op == "rand":
                 line += str(result) + " = rand();"
             elif op == "push":
-                line += "stack_push(&%s, sizeof(%s));" % (arg1, arg2)
+                line += "stack_push(yepc_stack, &%s, sizeof(%s));" % (arg1, arg2)
             elif op == "pop":
-                line += "stack_pop(&%s, sizeof(%s));" % (result, arg1)
+                line += "stack_pop(yepc_stack, &%s, sizeof(%s));" % (result, arg1)
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_code += "\t" + line + "\n"
         c_code += "}"
