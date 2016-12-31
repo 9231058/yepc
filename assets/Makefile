@@ -1,3 +1,5 @@
+CFLAGS=-Wall -O0 -g -std=gnu11
+
 all: yepc-output
 
 yepc-output: main.o stack.o
