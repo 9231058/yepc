@@ -55,6 +55,12 @@ class SymbolTable:
         proc_id = proc_table.name
         self.symbols[proc_id] = proc_table
 
+    def get_parent_function(self):
+        current = self
+        while current.type != 'function':
+            current = current.parent
+        return current
+
     def get_symbol_type(self, symbol):
         current = self
         result = current.symbols.get(symbol, None)
