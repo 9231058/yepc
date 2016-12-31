@@ -226,30 +226,31 @@ class YEPCParser:
 
     def p_fun_declaration(self, p):
         '''
-        funDeclaration :  funInitiator nexter quadder params PR_CLOSE statement
+        funDeclaration :  funInitiator nexter params PR_CLOSE statement
         '''
         s = self.symtables.pop()
-        s.header['start'] = p[3].quad
-        s.header['params'] = p[4]
+        s.header['params'] = p[3]
         self.symtables[-1].insert_procedure(s)
         YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
 
     def p_fun_initiator_1(self, p):
         '''
-        funInitiator : ID PR_OPEN
+        funInitiator : ID PR_OPEN quadder
         '''
         s = SymbolTable(self.symtables[-1], 'function', p[1])
         s.header['return_type'] = 'void'
+        s.header['start'] = p[3].quad + 1
         self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
 
     def p_fun_initiator_2(self, p):
         '''
-        funInitiator : typeSpecifier ID PR_OPEN
+        funInitiator : typeSpecifier ID PR_OPEN quadder
         '''
         s = SymbolTable(self.symtables[-1], 'function', p[2])
         s.header['return_type'] = p[1]
+        s.header['start'] = p[4].quad + 1
         self.symtables.append(s)
         print("Rule *: funInitiator -> empty")
 
@@ -530,20 +531,29 @@ class YEPCParser:
         returnStmt : RETURN_KW SEMICOLON
                    | RETURN_KW expression SEMICOLON
         '''
+        # Our function symbol table
         s = self.symtables[-1].get_parent_function()
+
+        # Create return statement if in main
         if s.name == '#aa11':
             self.quadruples.append(QuadRuple(op='return', result='', arg1='', arg2=''))
             return
-        t = self.symtables[-1].new_temp('jmp_buf')
-        self.quadruples.append(QuadRuple(op='pop', result='%s' % self.symtables[-1].get_symbol_name(t), arg1='jmp_buf', arg2=''))
+
+        # Restore previous location
+        t1 = self.symtables[-1].new_temp('jmp_buf')
+        self.quadruples.append(QuadRuple(op='pop', result='%s' % self.symtables[-1].get_symbol_name(t1), arg1='jmp_buf', arg2=''))
+
+        # Push the result if we have any result
         if len(p) == 3:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
-            p = self.symtables[-1].get_symbol_name(p[2].place)
-            t = p[2].type
-            self.quadruples.append(QuadRuple(op='push', result='', arg1=p, arg2=t))
+            t2 = self.symtables[-1].new_temp(p[2].type)
+            self.quadruples.append(QuadRuple(op='=', result=self.symtables[-1].get_symbol_name(t2), arg1=self.symtables[-1].get_symbol_name(p[2].place), arg2=p[2].type))
+            self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2=p[2].type))
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
-        self.quadruples.append(QuadRuple(op='longjmp', arg1=self.symtables[-1].get_symbol_name(t), arg2='1820', result=''))
+
+        # Goto to previous location
+        self.quadruples.append(QuadRuple(op='longjmp', arg1=self.symtables[-1].get_symbol_name(t1), arg2='1820', result=''))
 
     def p_break_stmt(self, p):
         '''
@@ -1220,12 +1230,23 @@ class YEPCParser:
         '''
         call : ID PR_OPEN args PR_CLOSE
         '''
-        p[0] = YEPCEntity()
-        p[0].type = self.symtables[0].symbols[p[1]].header['return_type']
-        p[0].place = self.symtables[-1].new_temp(p[0].type)
+        # Called function is ours or defines in root
+        s = self.symtables[-1].get_parent_function()
+        if s.name != p[1]:
+            s = self.symtables[0].symbols[p[1]]
+
+        # Provides place if function return something
+        if s.header['return_type'] != 'void':
+            p[0] = YEPCEntity()
+            p[0].type = s.header['return_type']
+            p[0].place = self.symtables[-1].new_temp(p[0].type)
+
         # Push the arguments
         for (name, type) in reversed(p[3]):
-            self.quadruples.append(QuadRuple(op='push', arg1=self.symtables[-1].get_symbol_name(name), arg2=type, result=''))
+            t = self.symtables[-1].new_temp(type)
+            self.quadruples.append(QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(name), arg2='', result=self.symtables[-1].get_symbol_name(t)))
+            self.quadruples.append(QuadRuple(op='push', arg1=self.symtables[-1].get_symbol_name(t), arg2=type, result=''))
+
         # Setjmp and check it's return value
         t1 = self.symtables[-1].new_temp('int')
         t2 = self.symtables[-1].new_temp('jmp_buf')
@@ -1233,11 +1254,14 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='if', arg1='%s != 1820' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         self.quadruples.append(QuadRuple(op='push', arg1='%s' % self.symtables[-1].get_symbol_name(t2), arg2='jmp_buf', result=''))
         self.quadruples.append(QuadRuple(op='if', arg1='%s != 1820' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
-        self.quadruples.append(QuadRuple(op='goto',
-                                         arg1=self.symtables[0].symbols[p[1]].header['start'],
-                                         arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='goto', arg1=s.header['start'], arg2='', result=''))
         # Pop the function return value
-        self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=self.symtables[-1].get_symbol_name(p[0].place)))
+        if s.header['return_type'] != 'void':
+            self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=self.symtables[-1].get_symbol_name(p[0].place)))
+
+        # Pop the arguments
+        for _ in p[3]:
+            self.quadruples.append(QuadRuple(op='pop', arg1='', arg2='', result=''))
         print("Rule 99: call -> ID(args)")
 
     def p_args_1(self, p):
