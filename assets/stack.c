@@ -39,5 +39,23 @@ void stack_pop(struct stack *stack, void *sink, size_t type_size)
 	stack->top = stack->top->next;
 
 	/* Write data into sink */
-	memcpy(sink, old_node->data, type_size);
+	if (sink) {
+		memcpy(sink, old_node->data, type_size);
+	}
+}
+
+void stack_seek(struct stack *stack, int location, void *sink, size_t type_size)
+{
+	struct node *current;
+	int i;
+	
+	/* seek and find :) */
+	current = stack->top;
+	for (i = 0; i < location && current->next; i++)
+		current = current->next;
+
+	/* Write data into sink */
+	if (sink) {
+		memcpy(sink, current->data, type_size);
+	}
 }

@@ -16,4 +16,6 @@ void stack_push(struct stack *stack, const void *source, size_t type_size);
 
 void stack_pop(struct stack *stack, void *sink, size_t type_size);
 
+void stack_seek(struct stack *stack, int location, void *sink, size_t type_size);
+
 #endif
