@@ -325,30 +325,35 @@ class YEPCParser:
         '''
         statement : expressionStmt
         '''
+        p[0] = YEPCEntity()
         print("Rule 35: statement -> expressionStmt")
 
     def p_statement_2(self, p):
         '''
         statement : compoundStmt
         '''
+        p[0] = p[1]
         print("Rule 36: statement -> compoundStmt")
 
     def p_statement_3(self, p):
         '''
         statement : selectionStmt
         '''
+        p[0] = p[1]
         print("Rule 37: statement -> selectionStmt")
 
     def p_statement_4(self, p):
         '''
         statement : iterationStmt
         '''
+        p[0] = p[1]
         print("Rule 38: statement -> iterationStmt")
 
     def p_statement_5(self, p):
         '''
         statement : returnStmt
         '''
+        p[0] = p[1]
         print("Rule 39: statement -> returnStmt")
 
     def p_statement_6(self, p):
@@ -363,6 +368,8 @@ class YEPCParser:
         '''
         compoundStmt : BR_OPEN scopeInitiator localDeclarations statementList BR_CLOSE
         '''
+        p[0] = YEPCEntity()
+        p[0].next_list = p[4].next_list
         s = self.symtables.pop()
         self.symtables[-1].insert_scope(s)
         print("Rule 41: compoundStmt -> {localDeclarations statementList}")
@@ -391,7 +398,11 @@ class YEPCParser:
         statementList : statementList statement
                       | empty
         '''
+        p[0] = YEPCEntity()
+
         if len(p) == 3:
+            if p[2] is not None:
+                p[0].next_list = p[2].next_list + p[1].next_list
             print("Rule 44: statementList -> statementList statement")
         else:
             print("Rule 45: statementList -> empty")
@@ -444,7 +455,8 @@ class YEPCParser:
         q = QuadRuple(op='goto', arg1=str(p[7].quad), arg2='', result='')
         self.quadruples.append(q)
 
-        YEPCEntity.backpatch(case_next, len(self.quadruples))
+        # just for compatiblity
+        #YEPCEntity.backpatch(case_next, len(self.quadruples))
 
         if len(p[6].next_list) != 0:
             YEPCEntity.backpatch(p[6].next_list, len(self.quadruples))
@@ -461,8 +473,10 @@ class YEPCParser:
 
         p[0].next_list = p[5].next_list
 
+        # just for compatiblity
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
-        self.quadruples.append(q1)
+        #self.quadruples.append(q1)
+
         p[0].case_dict.append([str(p[2]), [str(p[4].quad), q1]])
         print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
 
@@ -472,10 +486,13 @@ class YEPCParser:
         '''
         p[0] = YEPCEntity()
 
-        p[0].next_list = p[6].next_list
+        p[0].next_list = p[6].next_list + p[1].next_list
 
+        # just for compatiblity
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
-        self.quadruples.append(q1)
+        #self.quadruples.append(q1)
+
+
         p[0].case_dict += (p[1].case_dict)
         p[0].case_dict.append([str(p[3]), [str(p[5].quad), q1]])
         print("Rule 52: caseElement ->",
