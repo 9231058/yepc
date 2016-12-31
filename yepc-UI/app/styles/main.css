@@ -85,3 +85,34 @@ body {
 .ace_editor {
   height: 200px;
 }
+
+@keyframes heartbeat
+{
+  0%
+  {
+    transform: scale( .75 );
+  }
+  20%
+  {
+    transform: scale( 1 );
+  }
+  40%
+  {
+    transform: scale( .75 );
+  }
+  60%
+  {
+    transform: scale( 1 );
+  }
+  100%
+  {
+    transform: scale( .75 );
+  }
+}
+
+.heart {
+	font-size: 20px;
+	color: #e00;
+	animation: heartbeat 1s infinite alternate;
+	transform-origin: center;
+}
