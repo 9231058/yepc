@@ -503,10 +503,13 @@ class YEPCParser:
         returnStmt : RETURN_KW SEMICOLON
                    | RETURN_KW expression SEMICOLON
         '''
+        t = self.symtables[-1].new_temp('jmp_buf')
+        self.quadruples.append(QuadRuple(op='pop', result='%s' % self.symtables[-1].get_symbol_name(t), arg1='jmp_buf', arg2=''))
         if len(p) == 3:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
+        self.quadruples.append(QuadRuple(op='longjmp', arg1=self.symtables[-1].get_symbol_name(t), arg2='1820', result=''))
 
     def p_break_stmt(self, p):
         '''
@@ -1186,7 +1189,7 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = self.symtables[0].symbols[p[1]].header['return_type']
         p[0].place = self.symtables[-1].new_temp(p[0].type)
-        self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples) + len(p[3]), arg2='int', result=''))
+        # Push the arguments
         for (name, type) in reversed(p[3]):
             self.quadruples.append(QuadRuple(op='push', arg1=self.symtables[-1].get_symbol_name(name), arg2=type, result=''))
         # Setjmp and check it's return value
@@ -1194,9 +1197,12 @@ class YEPCParser:
         t2 = self.symtables[-1].new_temp('jmp_buf')
         self.quadruples.append(QuadRuple(op='setjmp', arg1=self.symtables[-1].get_symbol_name(t2), arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='if', arg1='%s != 1820' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='push', arg1='%s' % self.symtables[-1].get_symbol_name(t2), arg2='jmp_buf', result=''))
+        self.quadruples.append(QuadRuple(op='if', arg1='%s != 1820' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[0].symbols[p[1]].header['start'],
                                          arg2='', result=''))
+        # Pop the function return value
         self.quadruples.append(QuadRuple(op='pop', arg1=p[0].type, arg2='', result=self.symtables[-1].get_symbol_name(p[0].place)))
         print("Rule 99: call -> ID(args)")
 
