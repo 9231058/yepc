@@ -1,0 +1,12 @@
+int #ff00(int #ff11)
+{
+	if (#ff11 .eq 0 or #ff11 .eq 1)
+		return 1;
+	return #ff00(#ff11 - 1) + #ff00(#ff11 - 2);
+}
+
+int #aa11()
+{
+	#ff00(10);
+	return;
+}
