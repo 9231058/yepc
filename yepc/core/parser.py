@@ -353,8 +353,10 @@ class YEPCParser:
 
     def p_statement_6(self, p):
         '''
-        statement : breakStmt
+        statement : breakStmt nexter
         '''
+        p[0] = YEPCEntity()
+        p[0].next_list = p[2].next_list
         print("Rule 40: statement -> breakStmt")
 
     def p_compound_stmt(self, p):
@@ -444,6 +446,8 @@ class YEPCParser:
 
         YEPCEntity.backpatch(case_next, len(self.quadruples))
 
+        if len(p[6].next_list) != 0:
+            YEPCEntity.backpatch(p[6].next_list, len(self.quadruples))
         YEPCEntity.backpatch(p[7].next_list, len(self.quadruples))
 
         print("Rule 50: selectionStmt ->",
@@ -454,6 +458,9 @@ class YEPCParser:
         caseElement : CASE_KW NUMCONST COLON quadder statement
         '''
         p[0] = YEPCEntity()
+
+        p[0].next_list = p[5].next_list
+
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
         self.quadruples.append(q1)
         p[0].case_dict.append([str(p[2]), [str(p[4].quad), q1]])
@@ -464,6 +471,9 @@ class YEPCParser:
         caseElement : caseElement CASE_KW NUMCONST COLON quadder statement
         '''
         p[0] = YEPCEntity()
+
+        p[0].next_list = p[6].next_list
+
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
         self.quadruples.append(q1)
         p[0].case_dict += (p[1].case_dict)
