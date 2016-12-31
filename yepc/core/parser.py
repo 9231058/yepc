@@ -208,7 +208,7 @@ class YEPCParser:
         returnTypeSpecifier : REAL_T
         '''
         print("Rule 21: returnTypeSpecifier -> REAL_T")
-        p[0] = 'real'
+        p[0] = 'double'
 
     def p_return_type_specifier_3(self, p):
         '''
@@ -503,11 +503,18 @@ class YEPCParser:
         returnStmt : RETURN_KW SEMICOLON
                    | RETURN_KW expression SEMICOLON
         '''
+        s = self.symtables[-1].get_parent_function()
+        if s.name == '#aa11':
+            self.quadruples.append(QuadRuple(op='return', result='', arg1='', arg2=''))
+            return
         t = self.symtables[-1].new_temp('jmp_buf')
         self.quadruples.append(QuadRuple(op='pop', result='%s' % self.symtables[-1].get_symbol_name(t), arg1='jmp_buf', arg2=''))
         if len(p) == 3:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
+            p = self.symtables[-1].get_symbol_name(p[2].place)
+            t = p[2].type
+            self.quadruples.append(QuadRuple(op='push', result='', arg1=p, arg2=t))
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
         self.quadruples.append(QuadRuple(op='longjmp', arg1=self.symtables[-1].get_symbol_name(t), arg2='1820', result=''))
 
@@ -1226,10 +1233,10 @@ class YEPCParser:
                 | expression
         '''
         if len(p) == 4:
-            p[0] = p[1].append(p[3].place, self.symtables[-1].get_symbol_type(p[3].place))
+            p[0] = p[1].append(p[3].place, p[3].type)
             print("Rule 102: argList -> argList, expression")
         else:
-            p[0] = [(p[1].place, self.symtables[-1].get_symbol_type(p[1].place))]
+            p[0] = [(p[1].place, p[1].type)]
             print("Rule 103: argList -> expression")
 
     def p_constant_1(self, p):
