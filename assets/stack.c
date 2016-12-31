@@ -42,6 +42,7 @@ void stack_pop(struct stack *stack, void *sink, size_t type_size)
 	if (sink) {
 		memcpy(sink, old_node->data, type_size);
 	}
+	free(old_node);
 }
 
 void stack_seek(struct stack *stack, int location, void *sink, size_t type_size)
