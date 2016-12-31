@@ -85,7 +85,7 @@ class YEPCToC:
                 line += "%s = setjmp(%s);" % (result, arg1)
             elif op == "longjmp":
                 line += "longjmp(%s, %s);" % (arg1, arg2)
-            # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
+
             c_code += "\t" + line + "\n"
         c_code += "}"
         print("ouput.c generated")
