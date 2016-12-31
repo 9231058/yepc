@@ -1189,6 +1189,11 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='push', arg1=len(self.quadruples) + len(p[3]), arg2='int', result=''))
         for (name, type) in reversed(p[3]):
             self.quadruples.append(QuadRuple(op='push', arg1=self.symtables[-1].get_symbol_name(name), arg2=type, result=''))
+        # Setjmp and check it's return value
+        t1 = self.symtables[-1].new_temp('int')
+        t2 = self.symtables[-1].new_temp('jmp_buf')
+        self.quadruples.append(QuadRuple(op='setjmp', arg1=self.symtables[-1].get_symbol_name(t2), arg2='', result=self.symtables[-1].get_symbol_name(t1)))
+        self.quadruples.append(QuadRuple(op='if', arg1='%s != 1820' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         self.quadruples.append(QuadRuple(op='goto',
                                          arg1=self.symtables[0].symbols[p[1]].header['start'],
                                          arg2='', result=''))
