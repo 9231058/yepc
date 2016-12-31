@@ -73,12 +73,18 @@ class YEPCToC:
             elif op == "push":
                 line += "stack_push(yepc_stack, &%s, sizeof(%s));" % (arg1, arg2)
             elif op == "pop":
-                if reuslt != '':
+                if result != '':
                     line += "stack_pop(yepc_stack, &%s, sizeof(%s));" % (result, arg1)
                 else:
                     line += "stack_pop(yepc_stack, NULL, 0);"
             elif op == "seek":
                 line += "stack_seek(yepc_stack, %d, &%s, sizeof(%s));" % (arg1, result, arg2)
+            elif op == "return":
+                line += "return 0;"
+            elif op == "setjmp":
+                line += "%s = setjmp(%s);" % (result, arg1)
+            elif op == "longjmp":
+                line += "longjmp(%s, %s);" % (arg1, arg2)
             # line += str(op) + " " + str(arg1) + " " + str(arg2) + " "+str(result)
             c_code += "\t" + line + "\n"
         c_code += "}"
