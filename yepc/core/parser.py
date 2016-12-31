@@ -258,9 +258,14 @@ class YEPCParser:
         params : paramList
         '''
         p[0] = p[1]
+        index = 0
         for (name, type) in p[0]:
+            index += 1
             self.quadruples.append(
-                QuadRuple(op='pop', arg1=type, arg2='', result=self.symtables[-1].get_symbol_name(name)))
+                QuadRuple(op='seek',
+                          arg1=index,
+                          arg2=type,
+                          result=self.symtables[-1].get_symbol_name(name)))
         print("Rule 26: params -> paramList")
 
     def p_params_2(self, p):
