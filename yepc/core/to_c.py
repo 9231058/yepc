@@ -61,13 +61,22 @@ class YEPCToC:
                     qn = t.get_symbol_name(symbol)
                     if 'struct' in t.symbols[symbol]:
                         objects.append((qn, t.symbols[symbol][:-1]))
-                    c_code += '%s %s;\n' % (t.symbols[symbol], qn)
+
+                    if symbol in t.meta and 'size' in t.meta[symbol]:
+                        # We see an array
+                        c_code += '%s %s[%d];\n' % (t.symbols[symbol][:-1], qn, t.meta[symbol]['size'])
+                    else:
+                        c_code += '%s %s;\n' % (t.symbols[symbol], qn)
                 elif isinstance(t.symbols[symbol], SymbolTable):
                     s = t.symbols[symbol]
                     if s.type == 'record':
                         c_code += '%s {\n' % s.name[:-1]
                         for (name, type) in s.symbols.items():
-                            c_code += "\t%s %s;\n" % (type, name[1:])
+                            if name in s.meta and 'size' in s.meta[name]:
+                                # We see an array
+                                c_code += '\t%s %s[%d];\n' % (type[:-1], name[1:], s.meta[name]['size'])
+                            else:
+                                c_code += "\t%s %s;\n" % (type, name[1:])
                         c_code += '};\n'
                     else:
                         q.append(s)
