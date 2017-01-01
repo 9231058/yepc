@@ -457,7 +457,7 @@ class YEPCParser:
         self.quadruples.append(q)
 
         # just for compatiblity
-        #YEPCEntity.backpatch(case_next, len(self.quadruples))
+        # YEPCEntity.backpatch(case_next, len(self.quadruples))
 
         if len(p[6].next_list) != 0:
             YEPCEntity.backpatch(p[6].next_list, len(self.quadruples))
@@ -476,7 +476,7 @@ class YEPCParser:
 
         # just for compatiblity
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
-        #self.quadruples.append(q1)
+        # self.quadruples.append(q1)
 
         p[0].case_dict.append([str(p[2]), [str(p[4].quad), q1]])
         print("Rule 51: caseElement -> CASE_KW NUMCONST: statement")
@@ -491,8 +491,7 @@ class YEPCParser:
 
         # just for compatiblity
         q1 = QuadRuple(op='goto', arg1='-', arg2='', result='')
-        #self.quadruples.append(q1)
-
+        # self.quadruples.append(q1)
 
         p[0].case_dict += (p[1].case_dict)
         p[0].case_dict.append([str(p[3]), [str(p[5].quad), q1]])
@@ -548,7 +547,8 @@ class YEPCParser:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
             t2 = self.symtables[-1].new_temp(p[2].type)
-            self.quadruples.append(QuadRuple(op='=', result=self.symtables[-1].get_symbol_name(t2), arg1=self.symtables[-1].get_symbol_name(p[2].place), arg2=p[2].type))
+            self.quadruples.append(QuadRuple(op='=', result=self.symtables[-1].get_symbol_name(t2),
+                                             arg1=self.symtables[-1].get_symbol_name(p[2].place), arg2=p[2].type))
             self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2=p[2].type))
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
 
@@ -1268,7 +1268,8 @@ class YEPCParser:
 
         # Pop the current state
         if s.header['return_type'] != 'void':
-            self.quadruples.append(QuadRuple(op='restore_env', arg1=self.symtables[-1].get_parent_function(), arg2=self.symtables[-1].get_symbol_name(p[0].place), result=''))
+            self.quadruples.append(QuadRuple(op='restore_env', arg1=self.symtables[-1].get_parent_function(),
+                                             arg2=self.symtables[-1].get_symbol_name(p[0].place), result=''))
         else:
             self.quadruples.append(QuadRuple(op='restore_env', arg1=self.symtables[-1].get_parent_function(), arg2='', result=''))
 
