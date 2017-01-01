@@ -539,13 +539,31 @@ class YEPCParser:
 
     def p_iteration_stmt(self, p):
         '''
-        iterationStmt : WHILE_KW PR_OPEN quadder simpleExpression PR_CLOSE quadder statement nexter
+        iterationStmt : iterationInitiator quadder statement nexter
         '''
-        YEPCEntity.backpatch(p[8].next_list, p[3].quad)
-        YEPCEntity.backpatch(p[4].true_list, p[6].quad)
-        YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[4].next_list, p[1].quad)
+        YEPCEntity.backpatch(p[1].true_list, p[2].quad)
+        YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
         print("Rule 55: iterationStmt ->",
               "WHILE_KW (simpleExpression) statement")
+
+    def p_iteration_initiator(self, p):
+        '''
+        iterationInitiator : WHILE_KW PR_OPEN quadder simpleExpression PR_CLOSE
+        '''
+        p[0] = YEPCEntity()
+        p[0].quad = p[3].quad
+        if (p[4].type == 'bool'):
+            p[0].true_list = p[4].true_list
+            p[0].false_list = p[4].false_list
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[4].place), arg2='', result=''))
+            qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            self.quadruples.append(qt)
+            p[0].true_list = [qt]
+            qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            p[0].false_list = [qf]
+            self.quadruples.append(qf)
 
     def p_return_stmt(self, p):
         '''
