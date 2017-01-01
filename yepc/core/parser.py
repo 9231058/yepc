@@ -50,8 +50,9 @@ class YEPCParser:
 
     def p_program_initiator(self, p):
         'programInitiator : empty'
-        print("Rule *: programInitiator -> empty")
+        SymbolTable.scope_seq = 0
         self.symtables.append(SymbolTable(None, 'scope', 'root'))
+        print("Rule *: programInitiator -> empty")
 
     def p_declaration_list(self, p):
         '''

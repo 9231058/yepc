@@ -14,7 +14,13 @@ class SymbolTable:
     scope_seq = 0
 
     '''
-    Provides symbol table in our front end compiler
+    Provides symbol table in our front end compiler.
+    each symbol table have following attributes:
+        - symbols
+        - header
+        - meta
+        - parent
+        - temp_id_generator
 
     | Symbol | Type |
     |:------:|:----:|
