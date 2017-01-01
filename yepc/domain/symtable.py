@@ -79,6 +79,10 @@ class SymbolTable:
         '''
         if not isinstance(symbol, str) or symbol[0] != '#':
             return symbol
+        if '.' in symbol:
+            symbol, field = symbol.split('.')
+        else:
+            field = None
         current = self
         result = current.symbols.get(symbol, None)
         while result is None:
@@ -87,7 +91,10 @@ class SymbolTable:
             else:
                 raise KeyError(symbol)
             result = current.symbols.get(symbol, None)
-        return current.generate_symbol_name(symbol)
+        if field is not None:
+            return '%s.%s' % (current.generate_symbol_name(symbol), field[1:])
+        else:
+            return current.generate_symbol_name(symbol)
 
     def get_symbol_meta(self, symbol):
         current = self
