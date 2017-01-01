@@ -427,31 +427,38 @@ class YEPCParser:
 
     def p_selection_stmt_1(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement quadder %prec IFTHEN
+        selectionStmt : selectionIfInitiator quadder statement quadder %prec IFTHEN
         '''
-        if (p[3].type == 'bool'):
-            YEPCEntity.backpatch(p[3].true_list, p[5].quad)
-            YEPCEntity.backpatch(p[3].false_list, p[7].quad)
-        else:
-            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
-            self.quadruples.append(QuadRuple(op='goto', arg1=p[5].quad, arg2='', result=''))
-            self.quadruples.append(QuadRuple(op='goto', arg1=p[7].quad, arg2='', result=''))
+        YEPCEntity.backpatch(p[1].true_list, p[2].quad)
+        YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         print("Rule 48: selectionStmt ->",
               "IF_KW (simpleExpression) statement")
 
     def p_selection_stmt_2(self, p):
         '''
-        selectionStmt : IF_KW PR_OPEN simpleExpression PR_CLOSE quadder statement ELSE_KW quadder statement
+        selectionStmt : selectionIfInitiator quadder statement ELSE_KW quadder statement
         '''
-        if (p[3].type == 'bool'):
-            YEPCEntity.backpatch(p[3].true_list, p[5].quad)
-            YEPCEntity.backpatch(p[3].false_list, p[8].quad)
-        else:
-            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
-            self.quadruples.append(QuadRuple(op='goto', arg1=p[5].quad, arg2='', result=''))
-            self.quadruples.append(QuadRuple(op='goto', arg1=p[8].quad, arg2='', result=''))
+        YEPCEntity.backpatch(p[1].true_list, p[2].quad)
+        YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         print("Rule 49: selectionStmt ->",
               "IF_KW (simpleExpression) statement ELSE_KW statement")
+
+    def p_selection_if_initiator(self, p):
+        '''
+        selectionIfInitiator : IF_KW PR_OPEN simpleExpression PR_CLOSE
+        '''
+        p[0] = YEPCEntity()
+        if (p[3].type == 'bool'):
+            p[0].true_list = p[3].true_list
+            p[0].false_list = p[3].false_list
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
+            qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            self.quadruples.append(qt)
+            p[0].true_list = [qt]
+            qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            p[0].false_list = [qf]
+            self.quadruples.append(qf)
 
     def p_selection_stmt_3(self, p):
         '''
