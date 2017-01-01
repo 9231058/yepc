@@ -98,7 +98,7 @@ class SymbolTable:
                 raise KeyError(symbol)
             result = current.symbols.get(symbol, None)
         if field is not None:
-            return '%s.%s' % (current.generate_symbol_name(symbol), field[1:])
+            return '%s->%s' % (current.generate_symbol_name(symbol), field[1:])
         else:
             return current.generate_symbol_name(symbol)
 

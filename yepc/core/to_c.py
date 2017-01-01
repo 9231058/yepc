@@ -65,7 +65,7 @@ class YEPCToC:
                 elif isinstance(t.symbols[symbol], SymbolTable):
                     s = t.symbols[symbol]
                     if s.type == 'record':
-                        c_code += 'struct %s {\n' % s.name
+                        c_code += '%s {\n' % s.name[:-1]
                         for (name, type) in s.symbols.items():
                             c_code += "\t%s %s;\n" % (type, name[1:])
                         c_code += '};\n'

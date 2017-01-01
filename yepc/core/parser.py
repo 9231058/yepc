@@ -94,7 +94,7 @@ class YEPCParser:
         '''
         recInitiator : RECORD_KW ID BR_OPEN
         '''
-        self.symtables.append(SymbolTable(self.symtables[-1], 'record', p[2][1:]))
+        self.symtables.append(SymbolTable(self.symtables[-1], 'record', 'struct %s*' % p[2][1:]))
         print("Rule *: recInitiator -> RECORD_KW ID {")
 
     def p_var_declaration(self, p):
