@@ -194,7 +194,7 @@ class YEPCParser:
             p[0] = p[1]
         else:
             print("Rule 19: typeSpecifier -> RECORD_KW ID")
-            p[0] = p[2][1:]
+            p[0] = 'struct %s*' % p[2][1:]
 
     def p_return_type_specifier_1(self, p):
         '''
