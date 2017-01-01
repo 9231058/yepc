@@ -21,11 +21,10 @@ class YEPCToC:
                     code += '\tstack_push(yepc_stack, &%s, sizeof(%s));\n' % (qn, t.symbols[symbol])
                     self.env[symbol_table.name].append((qn, t.symbols[symbol]))
                 elif isinstance(t.symbols[symbol], SymbolTable):
-                    s =  t.symbols[symbol]
+                    s = t.symbols[symbol]
                     if s.type == 'scope':
                         q.append(s)
         return code
-
 
     def restore_env(self, symbol_table, return_storage):
         # Pop the environment from the symbol table
