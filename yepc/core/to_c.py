@@ -40,6 +40,9 @@ class YEPCToC:
     def to_c(self):
         c_code = ""
 
+        # Objects array for allocating and deallocating
+        objects = []
+
         # Includes :)
         c_code += "#include <stdio.h>\n"
         c_code += "#include <stdlib.h>\n"
@@ -55,7 +58,10 @@ class YEPCToC:
             t = q.pop()
             for symbol in t.symbols:
                 if isinstance(t.symbols[symbol], str):
-                    c_code += '%s %s;\n' % (t.symbols[symbol], t.get_symbol_name(symbol))
+                    qn = t.get_symbol_name(symbol)
+                    if 'struct' in t.symbols[symbol]:
+                        objects.append((qn, t.symbols[symbol][:-1]))
+                    c_code += '%s %s;\n' % (t.symbols[symbol], qn)
                 elif isinstance(t.symbols[symbol], SymbolTable):
                     s = t.symbols[symbol]
                     if s.type == 'record':
@@ -67,11 +73,21 @@ class YEPCToC:
                         q.append(s)
         c_code += '\n'
 
-        # QuadRuples to code
+        # Main !
         c_code += "int main(){\n"
+
+        # Stack initiation
         c_code += "\tstruct stack *yepc_stack;\n"
         c_code += "\n"
         c_code += "\tyepc_stack = stack_create();\n"
+
+        # Object creation
+        c_code += "\n\t/* Object initiation */\n"
+        for (name, type) in objects:
+            c_code += "\t%s = malloc(sizeof(%s));\n" % (name, type)
+        c_code += "\n"
+
+        # QuadRuples to code
         for i, entry in enumerate(self.quadruples):
 
             op = entry.op
