@@ -426,6 +426,10 @@ class YEPCParser:
         if (p[3].type == 'bool'):
             YEPCEntity.backpatch(p[3].true_list, p[5].quad)
             YEPCEntity.backpatch(p[3].false_list, p[7].quad)
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
+            self.quadruples.append(QuadRuple(op='goto', arg1=p[5].quad, arg2='', result=''))
+            self.quadruples.append(QuadRuple(op='goto', arg1=p[7].quad, arg2='', result=''))
         print("Rule 48: selectionStmt ->",
               "IF_KW (simpleExpression) statement")
 
@@ -436,6 +440,10 @@ class YEPCParser:
         if (p[3].type == 'bool'):
             YEPCEntity.backpatch(p[3].true_list, p[5].quad)
             YEPCEntity.backpatch(p[3].false_list, p[8].quad)
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
+            self.quadruples.append(QuadRuple(op='goto', arg1=p[5].quad, arg2='', result=''))
+            self.quadruples.append(QuadRuple(op='goto', arg1=p[8].quad, arg2='', result=''))
         print("Rule 49: selectionStmt ->",
               "IF_KW (simpleExpression) statement ELSE_KW statement")
 
