@@ -43,7 +43,7 @@ class SymbolTable:
     def temp_id_generator(self):
         seq = 0
         while True:
-            yield '#jj' + str(seq)
+            yield '#kjj' + str(seq)
             seq += 1
 
     def new_temp(self, temp_type):
@@ -53,6 +53,12 @@ class SymbolTable:
 
     def insert_variable(self, var_id, var_type: str):
         self.symbols[var_id] = var_type
+
+    def insert_meta(self, symbol, meta_key, meta_value):
+        if symbol in self.meta:
+            self.meta[symbol][meta_key] = meta_value
+        else:
+            self.meta[symbol] = {meta_key: meta_value}
 
     def insert_scope(self, scope_table):
         self.symbols[scope_table.name] = scope_table
@@ -83,12 +89,18 @@ class SymbolTable:
         Get fully qualified name for your given symbol
         if it exists in symbol table hierarchy.
         '''
+        # Non mutables
         if not isinstance(symbol, str) or symbol[0] != '#':
             return symbol
-        if '.' in symbol:
-            symbol, field = symbol.split('.')
-        else:
-            field = None
+        # Records
+        rest_of_pointer = ''
+        if '->' in symbol:
+            symbol, rest_of_pointer = symbol.split('->', maxsplit=1)
+        # Arrays
+        rest_of_bracket = ''
+        if '[' in symbol:
+            symbol, rest_of_bracket = symbol.split('[', maxsplit=1)
+
         current = self
         result = current.symbols.get(symbol, None)
         while result is None:
@@ -97,10 +109,12 @@ class SymbolTable:
             else:
                 raise KeyError(symbol)
             result = current.symbols.get(symbol, None)
-        if field is not None:
-            return '%s->%s' % (current.generate_symbol_name(symbol), field[1:])
-        else:
-            return current.generate_symbol_name(symbol)
+        rest = ''
+        if rest_of_bracket != '':
+            rest += '[' + rest_of_bracket
+        if rest_of_pointer != '':
+            rest += '->' + rest_of_pointer
+        return current.generate_symbol_name(symbol) + rest
 
     def get_symbol_meta(self, symbol):
         current = self
