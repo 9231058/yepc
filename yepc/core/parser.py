@@ -105,7 +105,8 @@ class YEPCParser:
             if '.' in name:
                 # Handling arrays
                 name, size = name.split('.')
-                self.symtables[-1].insert_variable(name, p[1] + '.' + size)
+                self.symtables[-1].insert_variable(name, '%s*' % p[1])
+                self.symtables[-1].insert_meta(name, 'size', int(size))
             else:
                 # Hanling single variables
                 self.symtables[-1].insert_variable(name, p[1])
@@ -123,7 +124,8 @@ class YEPCParser:
             if '.' in name:
                 # Handling arrays
                 name, size = name.split('.')
-                self.symtables[-1].insert_variable(name, p[1] + '.' + size)
+                self.symtables[-1].insert_variable(name, '%s*' % p[1])
+                self.symtables[-1].insert_meta(name, 'size', int(size))
             else:
                 # Hanling single variables
                 self.symtables[-1].insert_variable(name, p[1])
@@ -1237,11 +1239,12 @@ class YEPCParser:
             p[0].type = self.symtables[-1].get_symbol_type(p[1])
             print("Rule 93: mutable -> ID")
         elif len(p) == 5:
+            p[0].place = "%s[%s]" % (p[1].place, self.symtables[-1].get_symbol_name(p[3].place))
+            p[0].type = p[1].type[:-1]
             print("Rule 94: mutable -> mutable[expression]")
         else:
-            record = self.symtables[-1].get_symbol_type(
-                self.symtables[-1].get_symbol_type(p[1].place))
-            p[0].place = "%s.%s" % (p[1].place, p[3])
+            record = self.symtables[-1].get_symbol_type(p[1].type)
+            p[0].place = "%s->%s" % (p[1].place, p[3][1:])
             p[0].type = record.symbols[p[3]]
             print("Rule 95: mutbale -> mutable.ID")
 
