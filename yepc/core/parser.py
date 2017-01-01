@@ -93,7 +93,7 @@ class YEPCParser:
         '''
         recInitiator : RECORD_KW ID BR_OPEN
         '''
-        self.symtables.append(SymbolTable(self.symtables[-1], 'record', p[2]))
+        self.symtables.append(SymbolTable(self.symtables[-1], 'record', p[2][1:]))
         print("Rule *: recInitiator -> RECORD_KW ID {")
 
     def p_var_declaration(self, p):
@@ -194,7 +194,7 @@ class YEPCParser:
             p[0] = p[1]
         else:
             print("Rule 19: typeSpecifier -> RECORD_KW ID")
-            p[0] = p[2]
+            p[0] = p[2][1:]
 
     def p_return_type_specifier_1(self, p):
         '''
@@ -1203,6 +1203,10 @@ class YEPCParser:
         elif len(p) == 5:
             print("Rule 94: mutable -> mutable[expression]")
         else:
+            record = self.symtables[-1].get_symbol_type(
+                self.symtables[-1].get_symbol_type(p[1].place))
+            p[0].place = "%s.%s" % (p[1].place, p[3])
+            p[0].type = record.symbols[p[3]]
             print("Rule 95: mutbale -> mutable.ID")
 
     def p_immutable_1(self, p):
