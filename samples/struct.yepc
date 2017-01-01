@@ -1,0 +1,17 @@
+record #jj11 {
+    int #jj00;
+}
+
+#aa22(record #jj11 #jj22)
+{
+    #jj22.#jj00 = 0;
+    return;
+}
+
+int #aa11()
+{
+    record #jj11 #jj22;
+    #jj22.#jj00 = 1;
+
+    return;
+}
