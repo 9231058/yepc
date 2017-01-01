@@ -1,0 +1,18 @@
+record #jj00 {
+	int #jj11[10];
+}
+
+record #jj11 {
+	record #jj00 #jj11;
+}
+
+int #aa11()
+{
+	int #aa22[10];
+	record #jj11 #jj11;
+
+	#aa22[5] = 10;
+	#jj11.#jj11.#jj11[5 + 2] = 0;
+
+	return;
+}
