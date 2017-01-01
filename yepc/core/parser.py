@@ -1241,6 +1241,9 @@ class YEPCParser:
             p[0].type = s.header['return_type']
             p[0].place = self.symtables[-1].new_temp(p[0].type)
 
+        # Push the current state
+        self.quadruples.append(QuadRuple(op='store_env', arg1=self.symtables[-1].get_parent_function(), arg2='', result=''))
+
         # Push the arguments
         for (name, type) in reversed(p[3]):
             t = self.symtables[-1].new_temp(type)
@@ -1262,6 +1265,13 @@ class YEPCParser:
         # Pop the arguments
         for _ in p[3]:
             self.quadruples.append(QuadRuple(op='pop', arg1='', arg2='', result=''))
+
+        # Pop the current state
+        if s.header['return_type'] != 'void':
+            self.quadruples.append(QuadRuple(op='restore_env', arg1=self.symtables[-1].get_parent_function(), arg2=self.symtables[-1].get_symbol_name(p[0].place), result=''))
+        else:
+            self.quadruples.append(QuadRuple(op='restore_env', arg1=self.symtables[-1].get_parent_function(), arg2='', result=''))
+
         print("Rule 99: call -> ID(args)")
 
     def p_args_1(self, p):
