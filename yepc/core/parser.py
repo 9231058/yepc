@@ -295,8 +295,12 @@ class YEPCParser:
         '''
         p[0] = []
         for name in p[2]:
-            p[0].append((name, p[1]))
-            self.symtables[-1].insert_variable(name, p[1])
+            type = p[1]
+            if '*' in name:
+                name = name[:-1]
+                type = type + '*'
+            p[0].append((name, type))
+            self.symtables[-1].insert_variable(name, type)
         print("Rule 30: paramTypeList -> typeSpecifier paramIdList")
 
     def p_param_id_list(self, p):
@@ -317,7 +321,7 @@ class YEPCParser:
                 | ID
         '''
         if len(p) == 4:
-            p[0] = '%s[]' % p[1]
+            p[0] = '%s*' % p[1]
             print("Rule 33: paramId -> ID [ ]")
         else:
             p[0] = p[1]
@@ -1331,7 +1335,10 @@ class YEPCParser:
                 | expression
         '''
         if len(p) == 4:
-            p[0] = p[1].append(p[3].place, p[3].type)
+            if p[0] is not None:
+                p[0] = p[1].append((p[3].place, p[3].type))
+            else:
+                p[0] = [(p[3].place, p[3].type)]
             print("Rule 102: argList -> argList, expression")
         else:
             p[0] = [(p[1].place, p[1].type)]
