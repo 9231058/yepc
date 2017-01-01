@@ -1,0 +1,12 @@
+int #aa11()
+{
+	int #jj00 : 0;
+	int #ii00 : 1;
+
+	while (#ii00 .lt 4) {
+		#jj00 += #ii00;
+		#ii00 += 1;
+	}
+
+	return;
+}
