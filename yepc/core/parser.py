@@ -746,8 +746,16 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
 
-        p[0].true_list = p[3].true_list
-        YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+        if p[3].type == 'bool':
+            p[0].true_list = p[3].true_list
+            YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
+            qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            self.quadruples.append(qt)
+            p[0].true_list = [qt]
+            self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples), arg2='', result=''))
+
         self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
@@ -772,8 +780,16 @@ class YEPCParser:
         self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
         self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
 
-        p[0].false_list = p[3].false_list
-        YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+        if p[3].type == 'bool':
+            p[0].false_list = p[3].false_list
+            YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place), arg2='', result=''))
+            self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 1, arg2='', result=''))
+            qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            p[0].false_list = [qf]
+            self.quadruples.append(qf)
+
         self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
