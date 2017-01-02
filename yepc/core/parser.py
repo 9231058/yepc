@@ -448,6 +448,7 @@ class YEPCParser:
         selectionIfInitiator : IF_KW PR_OPEN simpleExpression PR_CLOSE
         '''
         p[0] = YEPCEntity()
+        p[0].type = 'bool'
         if (p[3].type == 'bool'):
             p[0].true_list = p[3].true_list
             p[0].false_list = p[3].false_list
@@ -552,6 +553,7 @@ class YEPCParser:
         iterationInitiator : WHILE_KW PR_OPEN quadder simpleExpression PR_CLOSE
         '''
         p[0] = YEPCEntity()
+        p[0].type = 'bool'
         p[0].quad = p[3].quad
         if (p[4].type == 'bool'):
             p[0].true_list = p[4].true_list
@@ -753,32 +755,9 @@ class YEPCParser:
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
-        if p[1].type == 'bool':
-            if p[5].type == 'bool':
-                YEPCEntity.backpatch(p[1].false_list, p[4].quad)
-                p[0].true_list = p[1].true_list + p[5].true_list
-                p[0].false_list = p[5].false_list
-            else:
-                YEPCEntity.backpatch(p[1].false_list, p[4].quad)
-                self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[5].place), arg2='', result=''))
-                gt = QuadRuple(op='goto', arg1='-', arg2='', result='')
-                gf = QuadRuple(op='goto', arg1='-', arg2='', result='')
-                self.quadruples.append(gt)
-                self.quadruples.append(gf)
-                p[0].true_list = p[1].true_list + [gt]
-                p[0].false_list = [gf]
-        else:
-            if p[5].type == 'bool':
-                self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=''))
-                gt = QuadRuple(op='goto', arg1='-', arg2='', result='')
-                gf = QuadRuple(op='goto', arg1=p[4].quad, arg2='', result='')
-                self.quadruples.append(gt)
-                self.quadruples.append(gf)
-                p[0].true_list = p[5].true_list + [gt]
-                p[0].false_list = p[5].false_list
-            else:
-                pass
-
+        YEPCEntity.backpatch(p[1].false_list, p[4].quad)
+        p[0].true_list = p[1].true_list + p[5].true_list
+        p[0].false_list = p[5].false_list
         print("Rule 69: simpleExpression ->",
               "simpleExpression OR_KW ELSE_KW simpleExpression")
 
