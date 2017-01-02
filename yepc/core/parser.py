@@ -610,9 +610,17 @@ class YEPCParser:
         p[0] = YEPCEntity()
         p[0].type = p[1].type
         p[0].place = p[1].place
-        self.quadruples.append(QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[3].place),
-                                         arg2='',
-                                         result=self.symtables[-1].get_symbol_name(p[1].place)))
+        if p[3].type == 'bool':
+            YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+            self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='',
+                                             result=self.symtables[-1].get_symbol_name(p[1].place)))
+            YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+            self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='',
+                                             result=self.symtables[-1].get_symbol_name(p[1].place)))
+        else:
+            self.quadruples.append(QuadRuple(op='=', arg1=self.symtables[-1].get_symbol_name(p[3].place),
+                                             arg2='',
+                                             result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 59: expression -> mutable EXP expression")
 
     def p_expression_2(self, p):
@@ -1414,13 +1422,34 @@ class YEPCParser:
                 | expression
         '''
         if len(p) == 4:
-            if p[0] is not None:
-                p[0] = p[1].append((p[3].place, p[3].type))
+            if p[3].type == 'bool':
+                t = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                if p[0] is not None:
+                    p[0] = p[1].append((t, 'int'))
+                else:
+                    p[0] = [(t, 'int')]
             else:
-                p[0] = [(p[3].place, p[3].type)]
+                if p[0] is not None:
+                    p[0] = p[1].append((p[3].place, p[3].type))
+                else:
+                    p[0] = [(p[3].place, p[3].type)]
             print("Rule 102: argList -> argList, expression")
         else:
-            p[0] = [(p[1].place, p[1].type)]
+            if p[1].type == 'bool':
+                t = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                p[0] = [(t, 'int')]
+            else:
+                p[0] = [(p[1].place, p[1].type)]
             print("Rule 103: argList -> expression")
 
     def p_constant_1(self, p):
