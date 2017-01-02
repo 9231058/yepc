@@ -598,10 +598,19 @@ class YEPCParser:
         if len(p) == 3:
             print("Rule 56: returnStmt -> RETURN_KW ;")
         else:
-            t2 = self.symtables[-1].new_temp(p[2].type)
-            self.quadruples.append(QuadRuple(op='=', result=self.symtables[-1].get_symbol_name(t2),
-                                             arg1=self.symtables[-1].get_symbol_name(p[2].place), arg2=p[2].type))
-            self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2=p[2].type))
+            if p[2].type == 'bool':
+                t2 = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t2)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t2)))
+                self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2='int'))
+            else:
+                t2 = self.symtables[-1].new_temp(p[2].type)
+                self.quadruples.append(QuadRuple(op='=', result=self.symtables[-1].get_symbol_name(t2),
+                                                 arg1=self.symtables[-1].get_symbol_name(p[2].place), arg2=p[2].type))
+                self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2=p[2].type))
             print("Rule 57: returnStmt -> RETURN_KW expression ;")
 
         # Goto to previous location
