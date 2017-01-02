@@ -696,22 +696,58 @@ class YEPCParser:
             QuadRuple(op='-', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='1', result=self.symtables[-1].get_symbol_name(p[1].place)))
         print("Rule 66: expression -> mutable MINUSMINUS")
 
+    def p_and_initiator(self, p):
+        '''
+        andInitiator : simpleExpression AND_KW
+        '''
+        p[0] = YEPCEntity()
+        p[0].type = 'bool'
+        if (p[1].type == 'bool'):
+            p[0].true_list = p[1].true_list
+            p[0].false_list = p[1].false_list
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=''))
+            qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            self.quadruples.append(qt)
+            p[0].true_list = [qt]
+            qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            p[0].false_list = [qf]
+            self.quadruples.append(qf)
+
+    def p_or_initiator(self, p):
+        '''
+        orInitiator : simpleExpression OR_KW
+        '''
+        p[0] = YEPCEntity()
+        p[0].type = 'bool'
+        if (p[1].type == 'bool'):
+            p[0].true_list = p[1].true_list
+            p[0].false_list = p[1].false_list
+        else:
+            self.quadruples.append(QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[1].place), arg2='', result=''))
+            qt = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            self.quadruples.append(qt)
+            p[0].true_list = [qt]
+            qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
+            p[0].false_list = [qf]
+            self.quadruples.append(qf)
+
     def p_simple_expression_1(self, p):
         '''
-        simpleExpression : simpleExpression OR_KW quadder simpleExpression
+        simpleExpression : orInitiator quadder simpleExpression %prec OR_KW
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
         t1 = self.symtables[-1].new_temp('int')
         YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
-        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
-        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
 
-        p[0].true_list = p[4].true_list
-        YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
+        p[0].true_list = p[3].true_list
+        YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
@@ -724,20 +760,20 @@ class YEPCParser:
 
     def p_simple_expression_2(self, p):
         '''
-        simpleExpression : simpleExpression AND_KW quadder simpleExpression
+        simpleExpression : andInitiator quadder simpleExpression %prec AND_KW
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
         t1 = self.symtables[-1].new_temp('int')
         YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
-        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t1)))
-        self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
+        self.quadruples.append(QuadRuple(op='goto', arg1=p[2].quad, arg2='', result=''))
 
-        p[0].false_list = p[4].false_list
-        YEPCEntity.backpatch(p[4].true_list, len(self.quadruples))
+        p[0].false_list = p[3].false_list
+        YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
         self.quadruples.append(QuadRuple(op='if', arg1='%s == 0' % self.symtables[-1].get_symbol_name(t1), arg2='', result=''))
         qf = QuadRuple(op='goto', arg1='-', arg2='', result='')
         p[0].false_list.append(qf)
@@ -751,25 +787,25 @@ class YEPCParser:
 
     def p_simple_expression_3(self, p):
         '''
-        simpleExpression : simpleExpression OR_KW ELSE_KW quadder simpleExpression %prec ORELSE
+        simpleExpression : orInitiator ELSE_KW quadder simpleExpression %prec ORELSE
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
-        YEPCEntity.backpatch(p[1].false_list, p[4].quad)
-        p[0].true_list = p[1].true_list + p[5].true_list
-        p[0].false_list = p[5].false_list
+        YEPCEntity.backpatch(p[1].false_list, p[3].quad)
+        p[0].true_list = p[1].true_list + p[4].true_list
+        p[0].false_list = p[4].false_list
         print("Rule 69: simpleExpression ->",
               "simpleExpression OR_KW ELSE_KW simpleExpression")
 
     def p_simple_expression_4(self, p):
         '''
-        simpleExpression : simpleExpression AND_KW THEN_KW quadder simpleExpression %prec ANDTHEN
+        simpleExpression : andInitiator THEN_KW quadder simpleExpression %prec ANDTHEN
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
-        YEPCEntity.backpatch(p[1].true_list, p[4].quad)
-        p[0].false_list = p[1].false_list + p[5].false_list
-        p[0].true_list = p[5].true_list
+        YEPCEntity.backpatch(p[1].true_list, p[3].quad)
+        p[0].false_list = p[1].false_list + p[4].false_list
+        p[0].true_list = p[4].true_list
         print("Rule 70: simpleExpression ->",
               "simpleExpression AND_KW THEN_KW simpleExpression")
 
