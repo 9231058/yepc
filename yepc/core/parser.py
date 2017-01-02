@@ -231,8 +231,18 @@ class YEPCParser:
         '''
         funDeclaration :  funInitiator nexter params PR_CLOSE statement
         '''
-        s = self.symtables.pop()
+        s = self.symtables[-1]
+
+        if s.header['return_type'] != 'void':
+            y = YEPCEntity()
+            y.place = '0'
+            y.type = s.header['return_type']
+            self.p_return_stmt(['', 'return', y, ';'])
+        else:
+            self.p_return_stmt(['', 'return', ';'])
+
         s.header['params'] = p[3]
+        self.symtables.pop()
         self.symtables[-1].insert_procedure(s)
         YEPCEntity.backpatch(p[2].next_list, len(self.quadruples))
         print("Rule 24: funDeclaration -> typeSpecifier ID funInitiator (params) statement")
