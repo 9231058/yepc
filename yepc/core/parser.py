@@ -218,7 +218,7 @@ class YEPCParser:
         returnTypeSpecifier : BOOL_T
         '''
         print("Rule 22: returnTypeSpecifier -> BOOL_T")
-        p[0] = 'bool'
+        p[0] = 'int'
 
     def p_return_type_specifier_4(self, p):
         '''
