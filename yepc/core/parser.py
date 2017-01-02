@@ -971,12 +971,13 @@ class YEPCParser:
 
     def p_rel_expression(self, p):
         '''
-        relExpression : mathlogicExpression relop mathlogicExpression
+        relExpression : mathlogicExpression relop quadder mathlogicExpression
                       | mathlogicExpression
         '''
-        if len(p) == 4:
+        if len(p) == 5:
             p[0] = YEPCEntity()
             p[0].type = 'bool'
+            print(p[1].type + " -- " + p[4].type)
             if p[1].type == 'bool':
                 t = self.symtables[-1].new_temp('int')
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
@@ -985,19 +986,20 @@ class YEPCParser:
                 YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
                 self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
                 p[1].place = t
-            if p[3].type == 'bool':
+            if p[4].type == 'bool':
+                self.quadruples.append(QuadRuple(op='goto', arg1=p[3].quad, arg2='', result=''))
                 t = self.symtables[-1].new_temp('int')
-                YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+                YEPCEntity.backpatch(p[4].true_list, len(self.quadruples))
                 self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
                 self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
-                YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+                YEPCEntity.backpatch(p[4].false_list, len(self.quadruples))
                 self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
-                p[3].place = t
+                p[4].place = t
 
             self.quadruples.append(QuadRuple(op='if', result='',
                                              arg1='%s %s %s' % (self.symtables[-1].get_symbol_name(p[1].place),
                                                                 self.symtables[-1].get_symbol_name(p[2]),
-                                                                self.symtables[-1].get_symbol_name(p[3].place)),
+                                                                self.symtables[-1].get_symbol_name(p[4].place)),
                                              arg2=''))
             qt = QuadRuple(op='goto', result='', arg1='-', arg2='')
             qf = QuadRuple(op='goto', result='', arg1='-', arg2='')
@@ -1567,7 +1569,7 @@ class YEPCParser:
         '''
         p[0] = YEPCEntity()
         p[0].place = p[1]
-        p[0].type = 'real'
+        p[0].type = 'double'
         print("Rule 105: constant -> REALCONST")
 
     def p_constant_3(self, p):
