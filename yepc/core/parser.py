@@ -376,10 +376,9 @@ class YEPCParser:
 
     def p_statement_6(self, p):
         '''
-        statement : breakStmt nexter
+        statement : breakStmt
         '''
-        p[0] = YEPCEntity()
-        p[0].next_list = p[2].next_list
+        p[0] = p[1]
         print("Rule 40: statement -> breakStmt")
 
     def p_compound_stmt(self, p):
@@ -417,7 +416,6 @@ class YEPCParser:
                       | empty
         '''
         p[0] = YEPCEntity()
-
         if len(p) == 3:
             if p[2] is not None:
                 p[0].next_list = p[2].next_list + p[1].next_list
@@ -439,6 +437,8 @@ class YEPCParser:
         '''
         selectionStmt : selectionIfInitiator quadder statement quadder %prec IFTHEN
         '''
+        p[0] = YEPCEntity()
+        p[0].next_list = p[3].next_list
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
         YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         print("Rule 48: selectionStmt ->",
@@ -448,6 +448,8 @@ class YEPCParser:
         '''
         selectionStmt : selectionIfInitiator quadder statement ELSE_KW quadder statement
         '''
+        p[0] = YEPCEntity()
+        p[0].next_list = p[3].next_list + p[6].next_list
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
         YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         print("Rule 49: selectionStmt ->",
@@ -621,6 +623,10 @@ class YEPCParser:
         '''
         breakStmt : BREAK_KW SEMICOLON
         '''
+        p[0] = YEPCEntity()
+        q = QuadRuple(op='goto', arg1='-', arg2='', result='')
+        p[0].next_list.append(q)
+        self.quadruples.append(q)
         print("Rule 58: breakStmt -> BREAK_KW ;")
 
     def p_expression_1(self, p):
