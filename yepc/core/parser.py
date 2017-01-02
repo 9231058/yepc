@@ -158,9 +158,18 @@ class YEPCParser:
             print("Rule 12: varDeclarationInitialize -> varDeclarationId")
             p[0] = (p[1], None)
         else:
+            if p[3].type == 'bool':
+                t = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                p[0] = (p[1], t)
+            else:
+                p[0] = (p[1], p[3].place)
             print("Rule 13: varDeclarationInitialize ->",
                   "varDeclarationId: simpleExpression")
-            p[0] = (p[1], p[3].place)
 
     def p_var_declaration_id(self, p):
         '''
@@ -438,7 +447,8 @@ class YEPCParser:
         selectionStmt : selectionIfInitiator quadder statement quadder %prec IFTHEN
         '''
         p[0] = YEPCEntity()
-        p[0].next_list = p[3].next_list
+        if p[3] is not None:
+            p[0].next_list = p[3].next_list
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
         YEPCEntity.backpatch(p[1].false_list, p[4].quad)
         print("Rule 48: selectionStmt ->",
@@ -482,7 +492,7 @@ class YEPCParser:
         for i in range(len(p[6].case_dict)):
             key = p[6].case_dict[i][0]
             case_entry = p[6].case_dict[i][1]
-            q1 = QuadRuple(op='if', arg1=str(p[3].place)+' == ' + str(key), arg2='', result='')
+            q1 = QuadRuple(op='if', arg1=self.symtables[-1].get_symbol_name(p[3].place) + ' == ' + self.symtables[-1].get_symbol_name(key), arg2='', result='')
             q2 = QuadRuple(op='goto', arg1=str(case_entry[0]), arg2='', result='')
             self.quadruples.append(q1)
             self.quadruples.append(q2)
@@ -554,10 +564,11 @@ class YEPCParser:
         '''
         iterationStmt : iterationInitiator quadder statement nexter
         '''
+        if p[3] is not None:
+            YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
         YEPCEntity.backpatch(p[4].next_list, p[1].quad)
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
-        YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
         print("Rule 55: iterationStmt ->",
               "WHILE_KW (simpleExpression) statement")
 
@@ -603,10 +614,10 @@ class YEPCParser:
         else:
             if p[2].type == 'bool':
                 t2 = self.symtables[-1].new_temp('int')
-                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
+                YEPCEntity.backpatch(p[2].true_list, len(self.quadruples))
                 self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t2)))
                 self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
-                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+                YEPCEntity.backpatch(p[2].false_list, len(self.quadruples))
                 self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t2)))
                 self.quadruples.append(QuadRuple(op='push', result='', arg1=self.symtables[-1].get_symbol_name(t2), arg2='int'))
             else:
@@ -929,6 +940,7 @@ class YEPCParser:
         simpleExpression : NOT_KW simpleExpression
         '''
         p[0] = YEPCEntity()
+        p[0].type = 'bool'
         p[0].true_list = p[2].false_list
         p[0].false_list = p[2].true_list
         print("Rule 71: simpleExpression -> NOT_KW simpleExpression")
@@ -965,6 +977,23 @@ class YEPCParser:
         if len(p) == 4:
             p[0] = YEPCEntity()
             p[0].type = 'bool'
+            if p[1].type == 'bool':
+                t = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                p[1].place = t
+            if p[3].type == 'bool':
+                t = self.symtables[-1].new_temp('int')
+                YEPCEntity.backpatch(p[3].true_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='1', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                self.quadruples.append(QuadRuple(op='goto', arg1=len(self.quadruples) + 2, arg2='', result=''))
+                YEPCEntity.backpatch(p[3].false_list, len(self.quadruples))
+                self.quadruples.append(QuadRuple(op='=', arg1='0', arg2='', result=self.symtables[-1].get_symbol_name(t)))
+                p[3].place = t
+
             self.quadruples.append(QuadRuple(op='if', result='',
                                              arg1='%s %s %s' % (self.symtables[-1].get_symbol_name(p[1].place),
                                                                 self.symtables[-1].get_symbol_name(p[2]),
