@@ -555,6 +555,7 @@ class YEPCParser:
         YEPCEntity.backpatch(p[4].next_list, p[1].quad)
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
         YEPCEntity.backpatch(p[1].false_list, len(self.quadruples))
+        YEPCEntity.backpatch(p[3].next_list, len(self.quadruples))
         print("Rule 55: iterationStmt ->",
               "WHILE_KW (simpleExpression) statement")
 
