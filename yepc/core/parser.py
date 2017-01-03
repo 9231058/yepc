@@ -977,7 +977,6 @@ class YEPCParser:
         if len(p) == 5:
             p[0] = YEPCEntity()
             p[0].type = 'bool'
-            print(p[1].type + " -- " + p[4].type)
             if p[1].type == 'bool':
                 t = self.symtables[-1].new_temp('int')
                 YEPCEntity.backpatch(p[1].true_list, len(self.quadruples))
