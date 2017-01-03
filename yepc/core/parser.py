@@ -30,7 +30,7 @@ class YEPCParser:
         ('right', 'NOT_KW', 'UMINUS', 'UMULT', 'RANDOM',
          'MINUSMINUS', 'PLUSPLUS'),
         ('nonassoc', 'IFTHEN'),
-        ('nonassoc', 'ELSE_KW'),
+        ('nonassoc', 'IFELSE'),
     )
 
     def __init__(self):
@@ -444,7 +444,7 @@ class YEPCParser:
 
     def p_selection_stmt_1(self, p):
         '''
-        selectionStmt : selectionIfInitiator quadder statement quadder %prec IFTHEN
+        selectionStmt : selectionIfInitiator quadder statement quadder
         '''
         p[0] = YEPCEntity()
         if p[3] is not None:
@@ -456,18 +456,18 @@ class YEPCParser:
 
     def p_selection_stmt_2(self, p):
         '''
-        selectionStmt : selectionIfInitiator quadder statement ELSE_KW quadder statement
+        selectionStmt : selectionIfInitiator quadder statement ELSE_KW quadder statement %prec IFELSE
         '''
         p[0] = YEPCEntity()
         p[0].next_list = p[3].next_list + p[6].next_list
         YEPCEntity.backpatch(p[1].true_list, p[2].quad)
-        YEPCEntity.backpatch(p[1].false_list, p[4].quad)
+        YEPCEntity.backpatch(p[1].false_list, p[5].quad)
         print("Rule 49: selectionStmt ->",
               "IF_KW (simpleExpression) statement ELSE_KW statement")
 
     def p_selection_if_initiator(self, p):
         '''
-        selectionIfInitiator : IF_KW PR_OPEN simpleExpression PR_CLOSE
+        selectionIfInitiator : IF_KW PR_OPEN simpleExpression PR_CLOSE %prec IFTHEN
         '''
         p[0] = YEPCEntity()
         p[0].type = 'bool'
