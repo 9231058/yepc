@@ -1,6 +1,6 @@
 # yepc
 
-[![Travis branch](https://img.shields.io/travis/1995parham/yepc/master.svg?style=flat-square)](https://travis-ci.org/1995parham/yepc)
+[![Travis branch](https://img.shields.io/travis/com/1995parham/yepc/master.svg?style=flat-square)](https://travis-ci.com/1995parham/yepc)
 
 ## Introduction
 
