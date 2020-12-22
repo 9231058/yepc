@@ -1,9 +1,14 @@
+---
 language: python
 python:
-  - 3.6
+  - 3.8
+
+before_install:
+  - pip install --user --upgrade pipenv
 
 install:
-  - pip install -r dev-requirements.txt
+  - pipenv install
+  - pip install --user --upgrade flake8
 
 script:
   - flake8 --statistics --verbose *.py
