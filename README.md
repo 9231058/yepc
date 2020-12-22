@@ -11,6 +11,8 @@ nothing change, we are just two of them.
 ## How To Run
 
 We have planty of time, so we have created the an Angular Frontend for our project.
+The frontend project is outdated but with the help from [here](https://stackoverflow.com/questions/55921442/how-to-fix-referenceerror-primordials-is-not-defined-in-node),
+it works now.
 
 ```sh
 cd yepc-UI
