@@ -38,6 +38,10 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "karma start test/karma.conf.js"
+    "test": "karma start test/karma.conf.js",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.4"
   }
 }
