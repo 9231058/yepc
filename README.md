@@ -1,4 +1,4 @@
-# yepc
+# Yet Another El Project - Compiler
 
 [![Travis branch](https://img.shields.io/travis/com/1995parham/yepc/master.svg?style=flat-square)](https://travis-ci.com/1995parham/yepc)
 
@@ -7,6 +7,8 @@
 Another compiler project, nothing else. every year students of
 Amirkabir University of Technology write a simple compiler and
 nothing change, we are just two of them.
+
+The onlu difference is that we are using [ply](https://github.com/dabeaz/ply) and python for the first time :dancer:
 
 -- Fall 2016, Prof. Razzazi Compiler Course
 
