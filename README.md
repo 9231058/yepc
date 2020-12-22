@@ -36,5 +36,5 @@ npx grunt
 
 ## Contributors
 
-- Parham Alvani
-- Saman Fekri
+- [Parham Alvani](https://github.com/1995parham)
+- [Saman Fekri](https://github.com/samanfekri)
