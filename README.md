@@ -33,7 +33,7 @@ it works now.
 cd yepc-UI
 npm install
 npx bower install
-npx grunt
+npx grunt --force
 ```
 
 ## Contributors
