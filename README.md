@@ -1,6 +1,6 @@
 # Yet Another El Project - Compiler
 
-[![Travis branch](https://img.shields.io/travis/com/1995parham/yepc/master.svg?style=flat-square)](https://travis-ci.com/1995parham/yepc)
+[![Travis branch](https://img.shields.io/travis/com/1995parham/yepc/master.svg?style=flat-square&logo=travis)](https://travis-ci.com/1995parham/yepc)
 
 ## Introduction
 
